@@ -1,0 +1,25 @@
+{% extends 'gofuture_base.html' %}
+
+{% block head %}
+    <title>wszystkie zrobione</title>
+{% endblock %}
+<body>
+{% block body %}
+
+    <form method="POST" action="" >
+    {% for order in orders %}
+        <details>
+        <summary style="background: {{ order.date }};">
+    {{ order.order_id }} | {{ order.gold_color_type }} | {{ order.pipe }}&emsp;&emsp;&emsp;
+            <input type="checkbox" name="mycheckbox" id="{{ order.id }}" value="{{ order.id }}">
+        </summary>
+        </details>
+    {% endfor %}
+
+    <input type="submit">  przenies znowu na produkcje
+        </form>
+
+{% endblock %}
+</body>
+</html>
+
