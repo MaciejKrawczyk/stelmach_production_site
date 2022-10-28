@@ -169,6 +169,7 @@ def clicked_done(id):
         db.session.commit()
         return redirect('/gofuture/color-pipe-order')
     except:
+
         return 'There was an issue updating your task'
 
 
