@@ -65,8 +65,8 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Nazwa użytkownika"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Hasło"})
     submit = SubmitField("zaloguj się")
 
 
@@ -118,11 +118,6 @@ class GoFutureTable(db.Model):
 
 with app.app_context():
     db.create_all()
-
-
-@app.route('/no-access')
-def no_access():
-    return render_template('no_access.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
