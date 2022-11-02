@@ -127,7 +127,7 @@ def register():
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
         new_user = User(username=form.username.data, password=hashed_password)
-        # new_user.roles.append(Role(name=form.access.data))
+        new_user.roles.append(Role(name=form.access.data))
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
@@ -136,40 +136,45 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    print("username:", session.get("username", "logged out"))
-    print("role:", session.get("role", "brak"))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                user_roles = []
-                role_ids = UserRoles.query.filter_by(user_id=user.id).all()
-                for role_id in role_ids:
-                    id = role_id.role_id
-                    role = Role.query.filter_by(id=id).first()
-                    user_roles.append(role.name)
-                session["username"] = request.form.get('username')
-                session["role"] = user_roles
+    if session.get('username', 'logged out') != "logged out":
+        print("username:", session.get("username", "logged out"))
+        print("role:", session.get("role", "brak"))
+        return render_template('no_access.html')
+    else:
+        print("username:", session.get("username", "logged out"))
+        print("role:", session.get("role", "brak"))
+        form = LoginForm()
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=form.username.data).first()
+            if user:
+                if bcrypt.check_password_hash(user.password, form.password.data):
+                    user_roles = []
+                    role_ids = UserRoles.query.filter_by(user_id=user.id).all()
+                    for role_id in role_ids:
+                        id = role_id.role_id
+                        role = Role.query.filter_by(id=id).first()
+                        user_roles.append(role.name)
+                    session["username"] = request.form.get('username')
+                    session["role"] = user_roles
 
-                if 'technolog' in session['role']:
-                    session['role'] = ['operator', 'technolog']
-                if 'kierownik' in session['role']:
-                    session['role'] = ['kierownik', 'operator', 'technolog']
-                if 'prezes' in session['role']:
-                    session['role'] = ['operator', 'technolog', 'kierownik', 'prezes']
-                if 'admin' in session['role']:
-                    session['role'] = ['operator', 'kierownik', 'admin', 'technolog', 'prezes']
+                    if 'technolog' in session['role']:
+                        session['role'] = ['operator', 'technolog']
+                    if 'kierownik' in session['role']:
+                        session['role'] = ['kierownik', 'operator', 'technolog']
+                    if 'prezes' in session['role']:
+                        session['role'] = ['operator', 'technolog', 'kierownik', 'prezes']
+                    if 'admin' in session['role']:
+                        session['role'] = ['operator', 'kierownik', 'admin', 'technolog', 'prezes']
 
-                if 'admin' in session["role"]:
-                    return redirect("/dashboard")
-                if 'kierownik' in session["role"]:
-                    return redirect("/")
-                if 'operator' in session['role']:
-                    return redirect("/")
+                    if 'admin' in session["role"]:
+                        return redirect("/dashboard")
+                    if 'kierownik' in session["role"]:
+                        return redirect("/")
+                    if 'operator' in session['role']:
+                        return redirect("/")
 
-                return redirect("/login")
-    return render_template('login.html', form=form)
+                    return redirect("/login")
+        return render_template('login.html', form=form)
 
 
 @app.route("/dashboard", methods=["GET", "POST"])
@@ -258,6 +263,7 @@ def index():
 
 
 @app.route('/gofuture/color-pipe-order', methods=['POST', 'GET'])
+@access_required("operator")
 def color_pipe_order():
     current_order = ""
     if request.method == "POST":
@@ -306,6 +312,7 @@ def color_pipe_order():
 
 
 @app.route('/gofuture/color-pipe-order/clicked_done/<int:id>', methods=['POST', 'GET'])
+@access_required("operator")
 def clicked_done(id):
     order = GoFutureTable.query.get_or_404(id)
     order.place = 'z'
@@ -319,6 +326,7 @@ def clicked_done(id):
 
 
 @app.route('/gofuture/color-width-orders/clicked_done/<int:id>', methods=['POST', 'GET'])
+@access_required("operator")
 def clicked_done_width(id):
     order = GoFutureTable.query.get_or_404(id)
     order.place = 'z'
@@ -330,6 +338,7 @@ def clicked_done_width(id):
 
 
 @app.route('/gofuture/one-order-scan', methods=['POST', 'GET'])
+@access_required("operator")
 def one_order_scan():
     if request.method == "POST":
         order_id = request.form['order_id']
@@ -339,6 +348,7 @@ def one_order_scan():
 
 
 @app.route('/gofuture/one-order-scan/<string:order_id>', methods=['POST', 'GET'])
+@access_required("operator")
 def show_order(order_id):
     orders = GoFutureTable.query.filter_by(place='f').order_by(GoFutureTable.type).all()
     showed_order = []
@@ -358,6 +368,7 @@ def show_order(order_id):
 
 
 @app.route('/gofuture/color-width-orders', methods=['POST', 'GET'])
+@access_required("operator")
 def color_width_orders():
     if request.method == "POST":
         key = request.form.to_dict()
@@ -407,6 +418,7 @@ def color_width_orders():
 
 
 @app.route('/gofuture/done', methods=['POST', 'GET'])
+@access_required("operator")
 def done():
     if request.method == "POST":
         closed_orders = GoFutureTable.query.filter_by(place='z').all()
@@ -430,6 +442,7 @@ def done():
 
 
 @app.route('/gofuture/move', methods=['POST', 'GET'])
+@access_required("operator")
 def move():
     if request.method == 'POST':
         orders_list_to_change_place = []
@@ -493,6 +506,7 @@ def move():
 
 
 @app.route('/description-required', methods=['POST', 'GET'])
+@access_required("operator")
 def description_required():
     kolory_proby = []
     count_list = []
@@ -513,6 +527,13 @@ def description_required():
         order1 = GoFutureTable.query.filter_by(place='k', gold_color_type=type_gold_color, type=type_of_arkusz, date=date).count()
         count_list.append(order1)
     return render_template('description-required.html', orders_to_describe=orders_to_describe, kolory_proby=kolory_proby, count_list=count_list)
+
+
+#  / ____|/ __ \|  __ \|_   _| \ | |/ ____|
+# | |  __| |  | | |__) | | | |  \| | |  __
+# | | |_ | |  | |  _  /  | | | . ` | | |_ |
+# | |__| | |__| | | \ \ _| |_| |\  | |__| |
+#  \_____|\____/|_|  \_\_____|_| \_|\_____|
 
 
 if __name__ == '__main__':
