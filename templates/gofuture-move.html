@@ -24,7 +24,7 @@
         {% set type_arkusz = type[position_of_space + 1:position_of_greater-1] %}
         {% set date = type[position_of_greater + 1:] %}
         {% if order.gold_color_type == type_gold and order.type == type_arkusz and order.date == date %}
-            <label for="mycheckbox">{{ order.order_id }}</label>
+            <label for="mycheckbox">{{ order.order_id }} | {{ order.pipe }}</label>
             <input type="checkbox" name="mycheckbox" id="{{ type }}" value="{{ order.id }}">
 
         {% endif %}

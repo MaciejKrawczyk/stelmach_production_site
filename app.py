@@ -1,13 +1,91 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import qrcode
 import qrcode.image.svg
+from flask_session import Session
+from flask_bcrypt import Bcrypt
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError
+
+
+class ConfigClass(object):
+    SECRET_KEY = 'thisisasecretkey'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///database.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False  # Avoids SQLAlchemy warning
+    SESSION_PERMANENT = False
+    SESSION_TYPE = "filesystem"
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config.from_object(__name__ + '.ConfigClass')
+bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
+Session(app)
+
+
+class User(db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False)
+    password = db.Column(db.String(80), nullable=False, unique=True)
+    roles = db.relationship('Role', secondary='user_roles')
+    active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
+
+
+class Role(db.Model):  # do tej tabeli dodaje nowe funkcje
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+
+
+class UserRoles(db.Model):
+    __tablename__ = 'user_roles'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'))
+    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
+
+
+class RegisterForm(FlaskForm):
+    username = StringField(validators=[
+                           InputRequired(), Length(min=3, max=20)], render_kw={"placeholder": "Username"})
+    password = PasswordField(validators=[
+                             InputRequired(), Length(min=3, max=20)], render_kw={"placeholder": "Password"})
+    access = StringField(validators=[
+                            InputRequired(), Length(min=1, max=20)], render_kw={"placeholder": "access level"})
+    submit = SubmitField('zarejestruj użytkownika')
+
+    def validate_username(self, username):
+        existing_user_username = User.query.filter_by(
+            username=username.data).first()
+        if existing_user_username:
+            raise ValidationError(
+                'That username already exists. Please choose a different one.')
+
+
+class LoginForm(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+    submit = SubmitField("zaloguj się")
+
+
+def access_required(role):
+    def decorator_function(original_function):
+        def wrapper(*args, **kwargs):
+            if role in session.get('role', 'brak'):
+                print("username:", session.get("username", "logged out"))
+                print("role:", session.get("role", "brak"))
+                return original_function(*args, **kwargs)
+            else:
+                return redirect(url_for('login'))
+        wrapper.__name__ = original_function.__name__
+        return wrapper
+    return decorator_function
+
+
+def role_assign(role):
+    pass
 
 
 class GoFutureTable(db.Model):
@@ -41,6 +119,77 @@ class GoFutureTable(db.Model):
 with app.app_context():
     db.create_all()
 
+
+@app.route('/no-access')
+def no_access():
+    return render_template('no_access.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+@access_required('admin')
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        new_user = User(username=form.username.data, password=hashed_password)
+        new_user.roles.append(Role(name=form.access.data))
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    print("username:", session.get("username", "logged out"))
+    print("role:", session.get("role", "brak"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                user_roles = []
+                role_ids = UserRoles.query.filter_by(user_id=user.id).all()
+                for role_id in role_ids:
+                    id = role_id.role_id
+                    role = Role.query.filter_by(id=id).first()
+                    user_roles.append(role.name)
+                session["username"] = request.form.get('username')
+                session["role"] = user_roles
+
+                if 'technolog' in session['role']:
+                    session['role'] = ['operator', 'technolog']
+                if 'kierownik' in session['role']:
+                    session['role'] = ['kierownik', 'operator', 'technolog']
+                if 'prezes' in session['role']:
+                    session['role'] = ['operator', 'technolog', 'kierownik', 'prezes']
+                if 'admin' in session['role']:
+                    session['role'] = ['operator', 'kierownik', 'admin', 'technolog', 'prezes']
+
+                if 'admin' in session["role"]:
+                    return redirect("/dashboard")
+                if 'kierownik' in session["role"]:
+                    return redirect("/")
+                if 'operator' in session['role']:
+                    return redirect("/")
+
+                return redirect("/login")
+    return render_template('login.html', form=form)
+
+
+@app.route("/dashboard", methods=["GET", "POST"])
+@access_required('admin')
+def dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route("/logout", methods=['GET', 'POST'])
+def logout():
+    session.pop('username', None)
+    session.pop('role', None)
+    return redirect(url_for('login'))
+
+
 # __________________________________________________________
 # /  ____|/ __ \|  ____| |  | |__   __| |  | |  __ \|  ____|
 # | |  __| |  | | |__  | |  | |  | |  | |  | | |__) | |__
@@ -49,6 +198,7 @@ with app.app_context():
 #  \_____|\____/|_|     \____/   |_|   \____/|_|  \_\_____/
 
 @app.route('/', methods=['POST', 'GET'])
+@access_required("operator")
 def index():
     if request.method == "POST":
         arkusz = request.get_json()
