@@ -1,6 +1,22 @@
 {% extends 'gofuture_base.html' %}
 
 {% block head %}
+    <script>
+        window.addEventListener("load", function(event)
+        {
+            const details1 = '{{session.get('opened_details1', 'brak')}}';
+            const details2 = '{{session.get('opened_details2', 'brak')}}';
+            console.log(details1);
+            console.log(details2);
+            var details_one = document.getElementsByClassName(details1)
+            var details_two = document.getElementsByClassName(details2)
+            console.log(details_one[0])
+            console.log(details_two[0])
+            details_one[0].open = true
+            details_two[0].open = true
+
+        });
+    </script>
     <title>wstawki</title>
 {% endblock %}
 <body>
@@ -12,11 +28,11 @@
         {% set type_arkusz = type[position_of_space + 1:position_of_greater-1] %}
         {% set date = type[position_of_greater + 1:] %}
 
-        <details>
+        <details class="{{ date }}_{{ type_gold }}_{{ type_arkusz }}">
         <summary style="background:{{ date }}; "> {{ type_gold }} {{ type_arkusz }} </summary>
         {% for x in dict_with_pipes[type] %}
             {% set x = x[0] %}
-            <details>
+            <details class="{{ date }}_{{ type_gold }}_{{ type_arkusz }}_{{ x }}">
             <summary style="background:{{ date }}; "> {{ x }} </summary>
                 {% for order in orders_ring_sr %}
                     {% if order.gold_color_type==type_gold and order.type==type_arkusz and order.pipe==x %}

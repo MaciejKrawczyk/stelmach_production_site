@@ -1,5 +1,3 @@
-import json
-
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -10,6 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
+import json
 
 
 class ConfigClass(object):
@@ -193,13 +192,13 @@ def logout():
     session.pop('opened_details2', None)
     return redirect(url_for('login'))
 
-
 # __________________________________________________________
 # /  ____|/ __ \|  ____| |  | |__   __| |  | |  __ \|  ____|
 # | |  __| |  | | |__  | |  | |  | |  | |  | | |__) | |__
 # | | |_ | |  | |  __| | |  | |  | |  | |  | |  _  /|  __|
 # | |__| | |__| | |    | |__| |  | |  | |__| | | \ \| |____
 #  \_____|\____/|_|     \____/   |_|   \____/|_|  \_\_____/
+
 
 @app.route('/', methods=['POST', 'GET'])
 @access_required("operator")
@@ -255,7 +254,6 @@ def index():
                 if new_order.r50 == "":
                     new_order.program = "RING_TUL"
 
-
             try:
                 db.session.add(new_order)
                 db.session.commit()
@@ -264,6 +262,13 @@ def index():
         return "sukces"
     else:
         return render_template("index.html")
+
+
+@app.route('/manage-orders-to-describe', methods=['POST', 'GET'])
+@access_required("kierownik")
+def manage_rings_to_describe():
+    orders_to_describe = GoFutureTable.query.filter_by(place='k').order_by(GoFutureTable.type).all()
+    return render_template('manage_rings_to_describe.html', orders_to_describe=orders_to_describe)
 
 
 @app.route('/gofuture/color-pipe-order', methods=['POST', 'GET'])
@@ -392,6 +397,21 @@ def color_width_orders():
     if request.method == "POST":
         key = request.form.to_dict()
         key = list(key.keys())[0]
+        orders_ring_sr = GoFutureTable.query.filter_by(place='f', program='ring_tul').order_by(
+            GoFutureTable.type).all()
+        for order in orders_ring_sr:
+            # print(order.order_id)
+            if int(order.id) == int(key):
+                print("weszlo")
+                date = order.date
+                pipe = order.pipe
+                gold_color_type = order.gold_color_type
+                type = order.type
+                first_detail = f'{date}_{gold_color_type}_{type}'
+                second_detail = f'{date}_{gold_color_type}_{type}_{pipe}'
+                opened_details = [first_detail, second_detail]
+                session['opened_details1'] = opened_details[0]
+                session['opened_details2'] = opened_details[1]
         return redirect(f'/gofuture/color-width-orders/clicked_done/{key}')
     else:
         orders_ring_sr = GoFutureTable.query.filter_by(place='f', program='ring_tul').order_by(

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>zlecenia do opisania</title>
+</head>
+<body>
+
+<h1> Zlecenie wymagające opisu </h1>
+
+{% for order in orders_to_describe %}
+    {% set program = order.program %}
+    {% set pipe = order.pipe %}
+    {% if program == "" %}
+    <p>{{ order.order_id }} {{ order.gold_color_type }} {{ order.type }} => brak programu</p>
+    {% elif pipe == "" %}
+    <p>{{ order.order_id }} {{ order.gold_color_type }} {{ order.type }} => brak rury</p>
+    {% else %}
+    <p>{{ order.order_id }} {{ order.gold_color_type }} {{ order.type }}</p>
+    {% endif %}
+{% endfor %}
+
+</body>
+</html>

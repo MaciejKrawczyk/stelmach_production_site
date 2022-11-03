@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" href="{{ url_for('static', filename="") }}">
     <meta charset="UTF-8">
-    <title>Logowanie</title>
+    <title>🔑 Logowanie</title>
 </head>
 <body>
 <style>
@@ -210,11 +211,11 @@ body::after {
             <form method="POST" action="" class="login">
                 {{ form.hidden_tag() }}
 				<div class="login__field">
-					<i class="login__icon fas fa-user"></i>
+					<p class="login__icon fas fa-user">🥸</p>
 					{{ form.username(class_="login__input") }}
 				</div>
 				<div class="login__field">
-					<i class="login__icon fas fa-lock"></i>
+					<p class="login__icon fas fa-lock">🔑</p>
 					{{ form.password(class_="login__input") }}
 				</div>
 				{{ form.submit(class_="button login__submit") }}
@@ -226,7 +227,7 @@ body::after {
 			<span class="screen__background__shape screen__background__shape3"></span>
 			<span class="screen__background__shape screen__background__shape2"></span>
 			<span class="screen__background__shape screen__background__shape1"></span>
-            <h3 class="social-login">Zaloguj się, aby mieć dostęp do zawartości strony<h3>
+            <h3 class="social-login">Zaloguj się, aby mieć dostęp do zawartości strony</h3>
 		</div>
 	</div>
 </div>
