@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -187,6 +189,8 @@ def dashboard():
 def logout():
     session.pop('username', None)
     session.pop('role', None)
+    session.pop('opened_details1', None)
+    session.pop('opened_details2', None)
     return redirect(url_for('login'))
 
 
@@ -269,11 +273,28 @@ def color_pipe_order():
     if request.method == "POST":
         key = request.form.to_dict()
         key = list(key.keys())[0]
+        print(key)
+        order_ring_sr = GoFutureTable.query.filter_by(place='f', program='RING_AB_GR_1_SR').order_by(GoFutureTable.type).all()
+        for order in order_ring_sr:
+            # print(order.order_id)
+            if int(order.id) == int(key):
+                print("weszlo")
+                date = order.date
+                pipe = order.pipe
+                gold_color_type = order.gold_color_type
+                type = order.type
+                first_detail = f'{date}_{gold_color_type}_{type}'
+                second_detail = f'{date}_{gold_color_type}_{type}_{pipe}'
+                opened_details = [first_detail, second_detail]
+                session['opened_details1'] = opened_details[0]
+                session['opened_details2'] = opened_details[1]
+
         return redirect(f'/gofuture/color-pipe-order/clicked_done/{key}', )
 
         # order_id = request.form["done"]
         # print(order_id)
     else:
+        print(session.get('opened_details', 'brak'))
         orders_ring_sr = GoFutureTable.query.filter_by(place='f', program='RING_AB_GR_1_SR').order_by(GoFutureTable.type).all()
         # print(orders_ring_sr)
 
@@ -290,8 +311,6 @@ def color_pipe_order():
                 index_of_greater = kolor_proba.index(">")
                 type_of_arkusz = kolor_proba[position_of_space + 1:index_of_greater - 1]
                 date = kolor_proba[index_of_greater + 1:]
-                filtered_orders = GoFutureTable.query.filter_by(place='f', program='RING_AB_GR_1_SR', type=type_of_arkusz, gold_color_type=type_gold_color, date=date).all()
-                # print(filtered_orders)
                 pipes = GoFutureTable.query.filter_by(place='f', program='RING_AB_GR_1_SR', type=type_of_arkusz, gold_color_type=type_gold_color, date=date).with_entities(GoFutureTable.pipe).distinct().all()
                 dict_with_pipes[kolor_proba] = pipes
         # print(dict_with_pipes)
