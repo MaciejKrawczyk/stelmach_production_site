@@ -24,6 +24,9 @@
 <body>
 
 {% block body %}
+
+
+
     {% for type in kolory_proby %}
 
         {% set position_of_space = type.index(" ") %}
@@ -33,6 +36,7 @@
         {% set date = type[position_of_greater + 1:] %}
 
         <details class="{{ date }}_{{ type_gold }}_{{ type_arkusz }}">
+
         <summary style="background:{{ date }}; "> {{ type_gold }} {{ type_arkusz }} </summary>
         {% for x in dict_with_pipes[type] %}
             {% set x = x[0] %}

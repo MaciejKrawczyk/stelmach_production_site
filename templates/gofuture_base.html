@@ -8,9 +8,59 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename="js.js") }}">
     <script src="{{ url_for('static', filename='js.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        function myFunction() {
+        var x = document.getElementById("hide");
+            if (x.style.visibility === "hidden") {
+                    x.style.visibility = "visible";
+                  } else {
+                    x.style.visibility = "hidden";
+                    window.location.reload();
+                    }
+    }
+
+
+
+
+        socket = io()
+        socket.connect('http://127.0.0.1:5000/gofuture/color-pipe-order/')
+        socket.on('connect', function (){
+            socket.send('a')
+            console.log("connected")
+        })
+        socket.on('message', function (msg){
+            console.log(msg)
+            document.getElementById("sent-message").innerHTML = msg;
+            var y = document.getElementById("hide");
+            y.setAttribute("style", "visibility: visible;")
+        })
+
+    </script>
+    <style>
+
+    </style>
     {% block head %}{% endblock %}
 </head>
 <body>
+
+
+      	 <div id="hide" class="Message" style="visibility: hidden">
+                                <div id="messs"> <a href="#" onclick="myFunction()" title="Close" class="close">X</a>
+                                    <div >
+                                        <h4> MASZ NOWĄ WIADOMOŚĆ </h4>
+                                        <p>
+                                            ------------------
+                                        </p>
+                                        <p id="sent-message">
+
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
 <div class="sidebar">
     <div class="logo-details">
       <i class='bx bxl-c-plus-plus icon'>👑</i>

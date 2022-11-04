@@ -8,7 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
-import json
+from flask_socketio import SocketIO
 
 
 class ConfigClass(object):
@@ -24,6 +24,7 @@ app.config.from_object(__name__ + '.ConfigClass')
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 Session(app)
+socket = SocketIO(app)
 
 
 class User(db.Model):
@@ -121,6 +122,29 @@ with app.app_context():
     db.create_all()
 
 
+@socket.on('connect')
+def handlemsg():
+    print("CONNECTED")
+
+
+@app.route('/send-message/<string:msg>')
+def showmess(msg):
+    if socket.on('message'):
+        socket.send(msg)
+    return render_template('dashboard.html')
+
+
+@app.route('/send-message', methods=['GET', 'POST'])
+@access_required('prezes')
+def send_msg():
+    if request.method == "POST":
+        message = request.form['msg']
+        return redirect(f'/send-message/{message}')
+    else:
+        return render_template('send-message.html')
+
+
+
 @app.route('/register', methods=['GET', 'POST'])
 @access_required('admin')
 def register():
@@ -192,17 +216,9 @@ def logout():
     session.pop('opened_details2', None)
     return redirect(url_for('login'))
 
-# __________________________________________________________
-# /  ____|/ __ \|  ____| |  | |__   __| |  | |  __ \|  ____|
-# | |  __| |  | | |__  | |  | |  | |  | |  | | |__) | |__
-# | | |_ | |  | |  __| | |  | |  | |  | |  | |  _  /|  __|
-# | |__| | |__| | |    | |__| |  | |  | |__| | | \ \| |____
-#  \_____|\____/|_|     \____/   |_|   \____/|_|  \_\_____/
 
-
-@app.route('/', methods=['POST', 'GET'])
-@access_required("operator")
-def index():
+@app.route("/send-orders", methods=['GET', 'POST'])
+def send_orders():
     if request.method == "POST":
         arkusz = request.get_json()
         type = arkusz['type']
@@ -241,14 +257,14 @@ def index():
             # warunki dla zlecen
             if new_order.type == "na gotowo":
                 new_order.place = "g"
+            if new_order.type == "na surowo":
+                new_order.place = "f"
             if new_order.pipe == "":
                 new_order.place = "k"
 
             if new_order.program == "":
                 if new_order.r50 != "":
                     new_order.program = "ring_ab_gr_1_sr"
-            else:
-                new_order.place = "k"
 
             if new_order.program == "RING_AB_GR_1_SR":
                 if new_order.r50 == "":
@@ -259,9 +275,25 @@ def index():
                 db.session.commit()
             except:
                 return "there was an issue with your orders"
+
+            showmess("DODANO NOWE ZLECENIA")
+
         return "sukces"
     else:
-        return render_template("index.html")
+        return "bladdddd"
+
+# __________________________________________________________
+# /  ____|/ __ \|  ____| |  | |__   __| |  | |  __ \|  ____|
+# | |  __| |  | | |__  | |  | |  | |  | |  | | |__) | |__
+# | | |_ | |  | |  __| | |  | |  | |  | |  | |  _  /|  __|
+# | |__| | |__| | |    | |__| |  | |  | |__| | | \ \| |____
+#  \_____|\____/|_|     \____/   |_|   \____/|_|  \_\_____/
+
+
+@app.route('/', methods=['POST', 'GET'])
+@access_required("operator")
+def index():
+     return render_template("index.html")
 
 
 @app.route('/manage-orders-to-describe', methods=['POST', 'GET'])
@@ -576,4 +608,6 @@ def description_required():
 
 
 if __name__ == '__main__':
+
     app.run()
+    socket.run(app)
