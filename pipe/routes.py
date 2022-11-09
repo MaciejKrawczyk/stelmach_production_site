@@ -44,7 +44,7 @@ def send_msg():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-# @access_required('admin')
+@access_required('admin')
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
