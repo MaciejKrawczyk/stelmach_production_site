@@ -1,75 +1,9 @@
-from flask import Flask, render_template, request, redirect, session, url_for
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 import qrcode
 import qrcode.image.svg
-from flask_session.__init__ import Session
-from flask_bcrypt import Bcrypt
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
-from flask_socketio import SocketIO
-
-
-class ConfigClass(object):
-    SECRET_KEY = 'thisisasecretkey'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///database.db'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False  # Avoids SQLAlchemy warning
-    SESSION_PERMANENT = False
-    SESSION_TYPE = "filesystem"
-
-
-app = Flask(__name__)
-app.config.from_object(__name__ + '.ConfigClass')
-bcrypt = Bcrypt(app)
-db = SQLAlchemy(app)
-Session(app)
-socket = SocketIO(app)
-
-
-class User(db.Model):
-    __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False)
-    password = db.Column(db.String(80), nullable=False, unique=True)
-    roles = db.relationship('Role', secondary='user_roles')
-    active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
-
-
-class Role(db.Model):  # do tej tabeli dodaje nowe funkcje
-    __tablename__ = 'roles'
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(50), unique=True)
-
-
-class UserRoles(db.Model):
-    __tablename__ = 'user_roles'
-    id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'))
-    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
-
-
-class RegisterForm(FlaskForm):
-    username = StringField(validators=[
-                           InputRequired(), Length(min=3, max=20)], render_kw={"placeholder": "Username"})
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=3, max=20)], render_kw={"placeholder": "Password"})
-    access = StringField(validators=[
-                            InputRequired(), Length(min=1, max=20)], render_kw={"placeholder": "access level"})
-    submit = SubmitField('zarejestruj użytkownika')
-
-    def validate_username(self, username):
-        existing_user_username = User.query.filter_by(
-            username=username.data).first()
-        if existing_user_username:
-            raise ValidationError(
-                'That username already exists. Please choose a different one.')
-
-
-class LoginForm(FlaskForm):
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Nazwa użytkownika"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Hasło"})
-    submit = SubmitField("zaloguj się")
+from flask import render_template, request, redirect, session, url_for
+from pipe.models import User, UserRoles, GoFutureTable, Role
+from pipe import app, socket, bcrypt, db
+from pipe.forms import RegisterForm, LoginForm
 
 
 def access_required(role):
@@ -84,42 +18,6 @@ def access_required(role):
         wrapper.__name__ = original_function.__name__
         return wrapper
     return decorator_function
-
-
-def role_assign(role):
-    pass
-
-
-class GoFutureTable(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    place = db.Column(db.String(200), nullable=False, default='f')
-    date = db.Column(db.String(200), nullable=False)
-    type = db.Column(db.String(200), nullable=False)
-    gold_color_type = db.Column(db.String(200), nullable=False)
-    order_id = db.Column(db.String(200), nullable=False)
-    pipe = db.Column(db.String(200), nullable=True)
-    program = db.Column(db.String(200), nullable=True)
-    r50 = db.Column(db.Float, nullable=False)
-    r51 = db.Column(db.Float, nullable=False)
-    r52 = db.Column(db.Float, nullable=False)
-    r60 = db.Column(db.Float, nullable=False)
-    r40 = db.Column(db.Float, nullable=False)
-    r61 = db.Column(db.Float, nullable=False)
-    r41 = db.Column(db.Float, nullable=False)
-    r20 = db.Column(db.Float, nullable=False)
-    p1 = db.Column(db.Float, nullable=False)
-    p2 = db.Column(db.Float, nullable=False)
-    p3 = db.Column(db.Float, nullable=False)
-    p5 = db.Column(db.Float, nullable=False)
-    code = db.Column(db.String(10000), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f'"Order {self.id}"'
-
-
-with app.app_context():
-    db.create_all()
 
 
 @socket.on('connect')
@@ -146,7 +44,7 @@ def send_msg():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-@access_required('admin')
+# @access_required('admin')
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
@@ -282,18 +180,14 @@ def send_orders():
     else:
         return "bladdddd"
 
-# __________________________________________________________
-# /  ____|/ __ \|  ____| |  | |__   __| |  | |  __ \|  ____|
-# | |  __| |  | | |__  | |  | |  | |  | |  | | |__) | |__
-# | | |_ | |  | |  __| | |  | |  | |  | |  | |  _  /|  __|
-# | |__| | |__| | |    | |__| |  | |  | |__| | | \ \| |____
-#  \_____|\____/|_|     \____/   |_|   \____/|_|  \_\_____/
+
 
 
 @app.route('/', methods=['POST', 'GET'])
 @access_required("operator")
 def index():
      return render_template("index.html")
+
 
 
 @app.route('/manage-orders-to-describe', methods=['POST', 'GET'])
@@ -598,16 +492,3 @@ def description_required():
         order1 = GoFutureTable.query.filter_by(place='k', gold_color_type=type_gold_color, type=type_of_arkusz, date=date).count()
         count_list.append(order1)
     return render_template('description-required.html', orders_to_describe=orders_to_describe, kolory_proby=kolory_proby, count_list=count_list)
-
-
-#  / ____|/ __ \|  __ \|_   _| \ | |/ ____|
-# | |  __| |  | | |__) | | | |  \| | |  __
-# | | |_ | |  | |  _  /  | | | . ` | | |_ |
-# | |__| | |__| | | \ \ _| |_| |\  | |__| |
-#  \_____|\____/|_|  \_\_____|_| \_|\_____|
-
-
-if __name__ == '__main__':
-
-    app.run()
-    socket.run(app)
