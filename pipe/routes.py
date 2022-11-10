@@ -162,7 +162,7 @@ def send_orders():
 
             if new_order.program == "":
                 if new_order.r50 != "":
-                    new_order.program = "ring_ab_gr_1_sr"
+                    new_order.program = "RING_AB_GR_1_SR"
 
             if new_order.program == "RING_AB_GR_1_SR":
                 if new_order.r50 == "":
