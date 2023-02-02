@@ -1,3 +1,5 @@
+BRANCH "TOOLS" IS THE MAIN BRANCH
+
 Created by Maciej Krawczyk
 
 This is a guidebook for the simple site for a production company.
