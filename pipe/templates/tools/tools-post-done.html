@@ -1,0 +1,26 @@
+{% extends 'tools/tools-base.html' %}
+
+
+
+{% block body %}
+    <style>
+    .done {
+        color: black;
+        margin-left: 50px;
+        }
+    </style>
+
+    <h1 class="done">ŻĄDANIE ZOSTAŁO WYKONANE POPRAWNIE</h1>
+
+
+    <script>
+  function redirect () {
+     setTimeout(myURL, 1500);
+  }
+  function myURL() {
+     document.location.href = 'http://10.14.0.2/tools/magazyn/';
+  }
+  redirect()
+</script>
+{% endblock %}
+

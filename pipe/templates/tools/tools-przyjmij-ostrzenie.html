@@ -1,0 +1,89 @@
+{% extends 'tools/tools-base.html' %}
+
+    {% block head %}
+    <title>Wszystkie</title>
+    {% endblock %}
+
+{% block body %}
+    <label for="searchbox">Szukaj  </label><input type="search" oninput=liveSearch() id="searchbox">
+<style>
+    table, th, td {
+        border:1px solid black;
+        width: auto;
+    }
+    table {
+    width: 100%;
+    }
+        tr:hover {
+        background-color: lightgoldenrodyellow;
+    }
+</style>
+    <form action="/tools/przekaz-stanowisko/" method="post" >
+        <input type="submit" id="magazine" name="magazine" value="do ostrzenia">
+{#    <form action="" method="post" >#}
+{#        <input type="submit" value="daj na złom">#}
+    <table>
+    <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>nazwa</th>
+        <th>opis</th>
+        <th>szerokosc</th>
+        <th>kat</th>
+        <th>promien</th>
+        <th>producent</th>
+        <th>stanowisko</th>
+        <th>szuflada</th>
+    </tr>
+
+{% for tool in tools %}
+    <tr class="tool" >
+        <td><input type="checkbox" value="{{ tool.id }}" name="tool"></td>
+        <td>{{ tool.id }}</td>
+        <td><a href="/tools/{{ tool.id }}">{{ tool.name }}</a></td>
+        <td>{{ tool.description }}</td>
+        <td>{{ tool.width }}</td>
+        <td>{{ tool.angle }}</td>
+        <td>{{ tool.radius }}</td>
+        <td>{{ tool.company }}</td>
+        <td>{{ tool.id_position }}</td>
+        <td>{{ tool.shelf }}</td>
+    </tr>
+{% endfor %}
+{#    </form>#}
+    </table>
+</form>
+    <script>
+    function liveSearch() {
+  // Locate the card elements
+  let cards = document.getElementsByClassName('tool')
+  // Locate the search input
+  let search_query = document.getElementById("searchbox").value;
+  console.log(cards)
+  // Loop through the cards
+  for (var i = 0; i < cards.length; i++) {
+    // If the text is within the card...
+    if(cards[i].innerText.toLowerCase()
+      // ...and the text matches the search query...
+      .includes(search_query.toLowerCase())) {
+        // ...remove the `.is-hidden` class.
+        cards[i].setAttribute('style', 'visibility: visible');
+    } else {
+      // Otherwise, add the class.
+      cards[i].setAttribute('style', 'visibility: collapse');
+    }
+  }
+}
+//A little delay
+let typingTimer;
+let typeInterval = 100;
+let searchInput = document.getElementById('searchbox');
+
+searchInput.addEventListener('keyup', () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(liveSearch, typeInterval);
+});
+
+    </script>
+
+{% endblock %}

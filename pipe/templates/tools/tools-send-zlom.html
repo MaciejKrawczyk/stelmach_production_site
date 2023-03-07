@@ -1,0 +1,108 @@
+{% extends 'tools/tools-base.html' %}
+
+    {% block head %}
+    <title>Wszystkie</title>
+    {% endblock %}
+
+{% block body %}
+<style>
+    table, th, td {
+        border:1px solid black;
+        width: auto;
+        color: black;
+    }
+    table {
+    width: 100%;
+    }
+        tr:hover {
+        background-color: lightgoldenrodyellow;
+    }
+
+    .reason {
+        font-size: large;
+        padding: 20px;
+    }
+</style>
+    <form action="" method="post" >
+
+    <table>
+    <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>nazwa</th>
+        <th>opis</th>
+        <th>szerokosc</th>
+        <th>kat</th>
+        <th>promien</th>
+        <th>producent</th>
+        <th>stanowisko</th>
+        <th>szuflada</th>
+    </tr>
+
+{% for tool in tools %}
+    <tr class="tool" >
+        <td><input class="tool" type="checkbox" value="{{ tool.id }}" name="tool"></td>
+        <td>{{ tool.id }}</td>
+        <td><a href="/tools/{{ tool.id }}">{{ tool.name }}</a></td>
+        <td>{{ tool.description }}</td>
+        <td>{{ tool.width }}</td>
+        <td>{{ tool.angle }}</td>
+        <td>{{ tool.radius }}</td>
+        <td>{{ tool.company }}</td>
+        {% for position in positions %}
+            {% if position.id == tool.id_position %}
+                {% set place = position.pretty_name %}
+                <td>{{ place }}</td>
+            {% endif %}
+        {% endfor %}
+        <td>{{ tool.shelf }}</td>
+    </tr>
+{% endfor %}
+
+    </table>
+
+        <input class="reason" name="reason" placeholder="wpisz powód złomowania..." type="text" required>
+        <input type="submit" onclick="valthis()" value="daj na złom">
+    </form>
+
+    <script>
+    function liveSearch() {
+  // Locate the card elements
+  let cards = document.getElementsByClassName('tool')
+  // Locate the search input
+  let search_query = document.getElementById("searchbox").value;
+  console.log(cards)
+  // Loop through the cards
+  for (var i = 0; i < cards.length; i++) {
+    // If the text is within the card...
+    if(cards[i].innerText.toLowerCase()
+      // ...and the text matches the search query...
+      .includes(search_query.toLowerCase())) {
+        // ...remove the `.is-hidden` class.
+        cards[i].setAttribute('style', 'visibility: visible');
+    } else {
+      // Otherwise, add the class.
+      cards[i].setAttribute('style', 'visibility: collapse');
+    }
+  }
+}
+
+function valthis() {
+    var checkBoxes = document.getElementsByClassName('tool');
+    var isChecked = false;
+    console.log(checkBoxes)
+    for (var i = 0; i < checkBoxes.length; i++) {
+        if (checkBoxes[i].checked) {
+            isChecked = true;
+        };
+    };
+    if (isChecked) {
+    } else {
+        event.preventDefault()
+        alert('Proszę zaznaczyć co najmniej jedno narzędzie do przekazania!');
+    }
+}
+
+    </script>
+
+{% endblock %}

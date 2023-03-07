@@ -1,0 +1,52 @@
+{% extends 'tools/tools-base.html' %}
+
+{% block head %}
+    <title>{{ title }}</title>
+{% endblock %}
+
+
+{% block body %}
+
+    <style>
+
+    table, th, td {
+        color: black;
+        border:1px solid black;
+        width: auto;
+    }
+    table {
+    width: 100%;
+    }
+        tr:hover {
+        background-color: lightgoldenrodyellow;
+    }
+</style>
+
+    <table>
+    <tr>
+        <th>id</th>
+        <th>nazwa</th>
+        <th>opis</th>
+        <th>szerokosc</th>
+        <th>kat</th>
+        <th>promien</th>
+        <th>producent</th>
+        <th>nr szuflady</th>
+        <th>typ szuflady</th>
+    </tr>
+{% for tool in tools %}
+    <tr class="tool">
+        <td>{{ tool.id }}</td>
+        <td><a href="/tools/{{ tool.id }}">{{ tool.name }}</a></td>
+        <td>{{ tool.description }}</td>
+        <td>{{ tool.width }}</td>
+        <td>{{ tool.angle }}</td>
+        <td>{{ tool.radius }}</td>
+        <td>{{ tool.company }}</td>
+        <td>{{ tool.shelf }}</td>
+        <td>{{ tool.shelf_type }}</td>
+    </tr>
+{% endfor %}
+    </table>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zmiana danych narzędzia</title>
+</head>
+<body>
+
+    <h1> Zmień parametry narzędzia {{ tool.name }}</h1>
+    <form onsubmit="return confirm('UWAGA! Zmiany zajdą we wszystkich wystąpieniach tego narzędzia ({{ count_tools_dup }} sztuk)') " method="post">
+                    <div>
+                        <span class="input-title">Numer/ID narzędzia*</span><br>
+                        <input class="textbox" value={{ tool.name }} name="name" required type="text">
+                    </div>
+                    <div>
+                        <span class="input-title">Opis narzędzia*</span><br>
+                        <input required class="textbox" value={{ tool.description }} name="description" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Szerokość narzędzia [mm]*</span><br>
+                        <input required class="textbox" value={{ tool.width }} name="width" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Kąt [stopnie]*</span><br>
+                        <input required class="textbox" value={{ tool.angle }} name="angle" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Promień narzędzia*</span><br>
+                        <input required class="textbox" value={{ tool.radius }} name="radius" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Producent*</span><br>
+                        <input required class="textbox" value={{ tool.company }} name="company" type="text">
+                    </div>
+        <br>
+        <input type="submit" value="zmień">
+    </form>
+        <form action="/tools/szukaj/">
+        <input type="submit" value="wróć do wszystkich narzędzi">
+    </form>
+
+</body>
+</html>

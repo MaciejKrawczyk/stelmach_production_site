@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;;
+            background-color: lightcoral;
+            margin: 0;
+            overflow-y: hidden;
+        }
+
+        .main-container {
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            /* background-color: pink; */
+            background-image: linear-gradient(pink, lightcoral);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-window {
+            width: 1200px;
+            height: 85%;
+            /* background-color: cyan; */
+            background-image: url({{ url_for('static', filename='wallpaper2.jpg') }});
+            background-size: cover;
+            border-radius: 5px;
+        }
+
+        .right-side {
+            float: right;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            width: 40%;
+            border-top-left-radius: 40px;
+            border-bottom-left-radius: 40px;
+
+        }
+
+        .title {
+            font-weight: 500;
+            font-size: 2.3rem;
+        }
+
+        .right-side-wrapper {
+            /* height: 100%; */
+            margin-left: 3rem;
+            margin-right: 3rem;
+            margin-top: 5rem;
+            margin-bottom: 2rem;
+            /* border: black solid; */
+        }
+
+        .description {
+            color: gray;
+        }
+
+        .input-text {
+            box-sizing: border-box;
+            padding: 15px;
+            width: 100%;
+            margin-bottom: 15px;
+            border: lightgray solid 1px;
+            margin-top: 5px;
+            font-size: 1rem;
+        }
+
+        .input-submit {
+            margin-top: 10px;
+            padding: 15px;
+            text-align: center;
+            width: 100%;
+            background-color: pink;
+            border: none;
+            border-radius: 2px;
+            margin-bottom: 50px;
+
+            transition: background-color 0.5s;
+
+        }
+
+        .input-submit:hover {
+            background-color: silver;
+            cursor: pointer;
+        }
+
+        footer {
+            position: relative;
+            bottom: 0;
+            font-size: 0.6rem;
+            font-weight: 200;
+            margin: auto;
+        }
+
+    </style>
+
+    <div class="main-container">
+        <div class="main-window">
+            <div class="right-side">
+                <div class="right-side-wrapper">
+			<form method="POST" action="" class="login">
+			{{ form.hidden_tag() }}
+                    <h1 class="title">Zaloguj się</h1>
+                    <span class="description">Witaj na stronie PZ Stelmach zbudowaną
+                            z podprogramów z różnymi funkcjami. <br>
+                            Wpisz swoje dane, aby kontynuować. </span>
+                            <br><br><br>
+                    <span class="description">Login</span>
+                    {{ form.username(class_="input-text") }}
+                    <span class="description">Hasło</span>
+                    {{ form.password(class_="input-text") }}
+                    {{ form.submit(class_="input-submit") }}
+{#                    <footer>Created by Maciej Krawczyk 😎</footer>#}
+			</form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool history</title>
+</head>
+<body>
+    <style class="css-reset">
+        /*
+            1. Use a more-intuitive box-sizing model.
+        */
+        *, *::before, *::after {
+            {#box-sizing: border-box;#}
+        }
+        /*
+            2. Remove default margin
+        */
+        * {
+            margin: 0;
+        }
+        /*
+            3. Allow percentage-based heights in the application
+        */
+        html, body {
+            height: 100%;
+        }
+        /*
+            Typographic tweaks!
+            4. Add accessible line-height
+            5. Improve text rendering
+        */
+        body {
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        /*
+            6. Improve media defaults
+        */
+        img, picture, video, canvas, svg {
+            display: block;
+            max-width: 100%;
+        }
+        /*
+            7. Remove built-in form typography styles
+        */
+        input, button, textarea, select {
+            font: inherit;
+        }
+        /*
+            8. Avoid text overflows
+        */
+        p, h1, h2, h3, h4, h5, h6 {
+            overflow-wrap: break-word;
+        }
+        /*
+            9. Create a root stacking context
+        */
+        #root, #__next {
+            isolation: isolate;
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+        h1 {
+            font-size: 2rem;
+        }
+
+        html {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .navbar {
+            padding-right: 20px;
+            padding-left: 50px;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .navbar input {
+            font-weight: 700;
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            margin-right: 10px;
+            padding: 15px;
+            width: 10rem;
+            background-color: rgb(35, 35, 219);
+        }
+
+        .navbar input:hover {
+            background-color: rgb(145, 92, 194);
+        }
+
+        nav {
+
+            height: 5rem;
+            width: 100vw;
+        }
+
+        .under-nav {
+
+            width: 100vw;
+            height: 9rem;
+            display: inline-flex;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+        }
+
+        .tool-panel {
+            margin-top: 1rem;
+            margin-left: auto;
+            margin-right: auto;
+            border: lightgray 1px solid;
+            background-color: #F9FBFC;
+            width: 90%;
+            height: auto;
+            border-radius: 13px;
+        }
+
+        .data-box {
+            border-radius: 10px;
+            background-color: #F9FBFC;
+            margin: auto;
+            border: lightgray 1px solid;
+            width: 23%;
+            height: 7rem;
+        }
+
+        .tool-data-block {
+            display: block;
+            margin-top: 18px;
+        }
+
+        .data-title {
+            font-weight: 600;
+            color: gray;
+        }
+
+        .tool-panel-data {
+            margin: 15px;
+        }
+
+        .link-title {
+            margin-bottom: 15px;
+        }
+
+        .link {
+            display: inline-flex;
+            text-decoration: none;
+            border-radius: 10px;
+            color: white;
+            margin: 10px;
+            padding: 10px;
+            background-color: blue;
+        }
+
+        .link:hover {
+            background-color: blueviolet;
+        }
+
+        .history-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .history-right {
+            padding-top: 20px;
+            padding-right: 20px;
+            padding-bottom: 20px ;
+        }
+
+        .history-left {
+            padding-top: 20px;
+            padding-left: 20px;
+            padding-bottom: 20px ;
+        }
+
+        .tool-panel-title {
+            margin: 20px;
+        }
+
+        .data-box .title {
+            color: gray;
+            font-weight: 600;
+            margin-top: 8px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .data-box .main {
+            margin: auto;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+
+        .data-box .subtitle {
+            color: gray;
+            font-weight: 500;
+            margin: auto;
+            text-align: center;
+        }
+
+    </style>
+    <nav>
+        <div class="navbar">
+            <h1>{{ tool.name }}</h1>
+            <form action="/tools/magazyn/">
+                <input type="submit" value="Wróć">
+            </form>
+        </div>
+    </nav>
+
+    <div class="under-nav">
+        <div class="data-box">
+            <p class="title">Producent</p>
+            <p class="main">{{ tool.company }}</p>
+            <p class="subtitle">{{ percentage }}% bazy</p>
+        </div>
+
+        <div class="data-box">
+            <p class="title">Dodano</p>
+            <p class="main">{{ history_added.date.strftime("%d/%m/%Y, %H:%M") }}</p>
+            <p class="subtitle">do magazynu</p>
+        </div>
+
+        <div class="data-box">
+            <p class="title">Ilość zmian pozycji</p>
+            <p class="main">{{ history_count }}</p>
+            <p class="subtitle">średnio co {{ changes_time }} dni</p>
+        </div>
+
+        <div class="data-box">
+            <p class="title">Ostatnia zmiana pozycji</p>
+            <p class="main">{{ history_last.date.strftime("%d/%m/%Y, %H:%M") }}</p>
+                {% for position in positions %}
+                    {% if position.id == tool.id_position %}
+                        {% set place = position.pretty_name %}
+                        <p class="subtitle">{{ place }}</p>
+                    {% endif %}
+                {% endfor %}
+        </div>
+    </div>
+    <div class="main-container">
+        <div class="tool-container">
+            <div class="tool-panel">
+                <div class="tool-panel-data">
+                    <h3 >Szczegóły narzędzia</h3>
+                    <div class="tool-data-block">
+                        <span class="data-title">Nazwa/ID</span>
+                        <p class="data-description">{{ tool.name }}</p>
+                    </div>
+                    <div class="tool-data-block">
+                        <span class="data-title">Opis</span>
+                        <p class="data-description">{{ tool.description }}</p>
+                    </div>
+                    <div class="tool-data-block">
+                        <span class="data-title">Szuflada</span>
+                        <p class="data-description">{{ tool.shelf }}</p>
+                    </div>
+                    <div class="tool-data-block">
+                        <span class="data-title">Rodzaj Szuflady</span>
+                        <p class="data-description">{{ tool.shelf_type }}</p>
+                    </div>
+                    <div class="tool-data-block">
+                        <span class="data-title">Ilość na magazynie</span>
+                        <p class="data-description">{{ quantity }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-panel">
+                <div class="tool-panel-data">
+                    <h3 class="link-title">Załączone pliki</h3>
+                    <form enctype=multipart/form-data method="post" action="">
+                        <input multiple id="file" name="file" type="file">
+                        <input type="submit">
+                    </form>
+                    <div class="links">
+                        {% for file in files %}
+                            <div>
+                            <a class="link" download href="/tools/download/{{ tool.id_dup }}/{{ file }}">{{ file }}</a>
+                                <a href="/tools/file/delete/{{ tool.id }}/{{ file }}">X</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="main-panel">
+            <h2 class="tool-panel-title">Historia</h2>
+            <div class="history-container">
+                <div class="history-left">
+                    {% for history_element in history %}
+                    <p>{{ history_element.what_happened }}</p>
+                    <hr>
+                    {% endfor %}
+                </div>
+
+                <div class="history-right">
+                    {% for history_element in history %}
+                    <p>{{ history_element.date.strftime("%d/%m/%Y, %H:%M") }}</p>
+                    <hr>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
