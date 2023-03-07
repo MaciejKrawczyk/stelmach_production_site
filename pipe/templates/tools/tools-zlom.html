@@ -1,0 +1,91 @@
+{% extends 'tools/tools-base.html' %}
+
+    {% block head %}
+    <title>Złom</title>
+    {% endblock %}
+
+{% block body %}
+<style>
+    table, th, td {
+        border:1px solid black;
+        width: auto;
+        color: black;
+    }
+    table {
+    width: 100%;
+    }
+        tr:hover {
+        background-color: lightgoldenrodyellow;
+    }
+</style>
+
+    <table>
+    <tr>
+        <th><input onclick=toggle(this); type="checkbox" id="checkbox-all"></th>
+        <th>id</th>
+        <th>nazwa</th>
+        <th>opis</th>
+        <th>szerokosc</th>
+        <th>kat</th>
+        <th>promien</th>
+        <th>producent</th>
+    </tr>
+    <form action="" method="post" >
+{% for tool in tools %}
+    <tr class="tool">
+        <td><input type="checkbox" value="{{ tool.id }}" name="tool"></td>
+        <td>{{ tool.id }}</td>
+        <td><a href="/tools/{{ tool.id }}">{{ tool.name }}</a></td>
+        <td>{{ tool.description }}</td>
+        <td>{{ tool.width }}</td>
+        <td>{{ tool.angle }}</td>
+        <td>{{ tool.radius }}</td>
+        <td>{{ tool.company }}</td>
+    </tr>
+{% endfor %}
+    </table>
+    <input type="submit" onclick="return confirm('zaraz usuniesz zaznaczone narzędzia całkowicie z bazy danych. Jesteś pewny?')" id="magazine" name="magazine" value="usuń narzędzia!">
+
+    <script>
+    function toggle(source) {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i] !== source)
+            checkboxes[i].checked = source.checked;
+    }
+}
+
+
+    function liveSearch() {
+  // Locate the card elements
+  let cards = document.getElementsByClassName('tool')
+  // Locate the search input
+  let search_query = document.getElementById("searchbox").value;
+  console.log(cards)
+  // Loop through the cards
+  for (var i = 0; i < cards.length; i++) {
+    // If the text is within the card...
+    if(cards[i].innerText.toLowerCase()
+      // ...and the text matches the search query...
+      .includes(search_query.toLowerCase())) {
+        // ...remove the `.is-hidden` class.
+        cards[i].setAttribute('style', 'visibility: visible');
+    } else {
+      // Otherwise, add the class.
+      cards[i].setAttribute('style', 'visibility: collapse');
+    }
+  }
+}
+//A little delay
+let typingTimer;
+let typeInterval = 100;
+let searchInput = document.getElementById('searchbox');
+
+searchInput.addEventListener('keyup', () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(liveSearch, typeInterval);
+});
+
+    </script>
+
+{% endblock %}

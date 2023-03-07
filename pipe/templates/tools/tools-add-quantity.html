@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dodawanie ilościowe</title>
+</head>
+<body>
+    <h1> Dodawanie narzędzi tego samego typu (narzędzie: {{ tool.name }})</h1>
+    <h3> Uwaga! Dodane tutaj narzędzia będą wsadzane do tej samej szuflady co reszta narzędzi tego typu!</h3>
+
+    <form onsubmit="return confirm('Na pewno?') " method="POST" action="">
+    <div>
+        <span class="input-title">Wpisz, ile nowych narzędzi tego typu chcesz dodać</span><br>
+        <input class="textbox" placeholder="1" name="quantity" required min="1" type="number">
+    </div>
+        <input type="submit" value="dodaj">
+        </form>
+    <form action="/tools/szukaj/">
+        <input type="submit" value="wróć do wszystkich narzędzi">
+    </form>
+</body>
+</html>

@@ -1,0 +1,147 @@
+{% extends 'tools/tools-base.html' %}
+
+    {% block head %}
+    <title>Wszystkie</title>
+    {% endblock %}
+
+{% block body %}
+<style>
+    table, th, td {
+        border:1px solid black;
+        width: auto;
+        color: black;
+    }
+    table {
+    width: 100%;
+    }
+        tr:hover {
+        background-color: lightgoldenrodyellow;
+    }
+
+    label {
+        color: black;
+    }
+
+    .ws {
+        color: black;
+        font-size: large;
+    }
+</style>
+    <form action="" method="post" >
+    <table>
+    <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>nazwa</th>
+        <th>opis</th>
+        <th>szerokosc</th>
+        <th>kat</th>
+        <th>promien</th>
+        <th>producent</th>
+        <th>stanowisko</th>
+        <th>szuflada</th>
+    </tr>
+
+{% for tool in tools %}
+    <tr class="tool" >
+        <td><input class="tool" type="checkbox" value="{{ tool.id }}" name="tool"></td>
+        <td>{{ tool.id }}</td>
+        <td><a href="/tools/{{ tool.id }}">{{ tool.name }}</a></td>
+        <td>{{ tool.description }}</td>
+        <td>{{ tool.width }}</td>
+        <td>{{ tool.angle }}</td>
+        <td>{{ tool.radius }}</td>
+        <td>{{ tool.company }}</td>
+        {% for position in positions %}
+            {% if position.id == tool.id_position %}
+                {% set place = position.pretty_name %}
+                <td>{{ place }}</td>
+            {% endif %}
+        {% endfor %}
+        <td>{{ tool.shelf }}</td>
+    </tr>
+{% endfor %}
+
+    </table>
+
+    <h1 class="ws">Wybierz stanowisko</h1>
+
+    <label for="szyba">szyba</label><input id="szyba" value="2" name="position" required type="radio">
+        <br>
+    <label for="stanowisko-6">stanowisko-6</label><input id="stanowisko-6" value="3" name="position" type="radio">
+    <br>
+    <label for="stanowisko-4">stanowisko-4</label><input id="stanowisko-4" value="4" name="position" type="radio">
+    <br>
+    <label for="plat-tytan">plat-tytan</label><input id="plat-tytan" value="5" name="position" type="radio">
+    <br>
+        <label for="stanowisko-7">stanowisko-7</label><input id="stanowisko-7" value="6" name="position" type="radio">
+    <br>
+        <label for="stanowisko-13">stanowisko-13</label><input id="stanowisko-13" value="7" name="position" type="radio">
+    <br>
+        <label for="gofuture">gofuture</label><input id="gofuture" value="11" name="position" type="radio">
+    <br>
+        <label for="goring-rura">goring-rura</label><input id="goring-rura" value="12" name="position" type="radio">
+    <br>
+        <label for="rnd">rnd</label><input id="rnd" value="13" name="position" type="radio">
+    <br>
+        <label for="goring-rnd">goring-rnd</label><input id="goring-rnd" value="14" name="position" type="radio">
+    <br>
+        <label for="5-at-work-nowa">5-at-work-nowa</label><input id="5-at-work-nowa" value="15" name="position" type="radio">
+    <br>
+        <label for="5-at-work-stara">5-at-work-stara</label><input id="5-at-work-stara" value="16" name="position" type="radio">
+    <br>
+        <label for="chiron">chiron</label><input id="chiron" value="17" name="position" type="radio">
+        <br>
+
+{#    {% for position in positions %}#}
+{#        <label for="{{ position.name }}">{{ position.name }}</label><input id="{{ position.name }}" value="{{ position.id }}" name="position" type="radio">#}
+{#        <br>#}
+{##}
+{#    {% endfor %}#}
+        <input type="submit" onclick="valthis()" value="Przekaż" >
+</form>
+
+    <script>
+    function liveSearch() {
+  // Locate the card elements
+  let cards = document.getElementsByClassName('tool')
+  // Locate the search input
+  let search_query = document.getElementById("searchbox").value;
+  console.log(cards)
+  // Loop through the cards
+  for (var i = 0; i < cards.length; i++) {
+    // If the text is within the card...
+    if(cards[i].innerText.toLowerCase()
+      // ...and the text matches the search query...
+      .includes(search_query.toLowerCase())) {
+        // ...remove the `.is-hidden` class.
+        cards[i].setAttribute('style', 'visibility: visible');
+    } else {
+      // Otherwise, add the class.
+      cards[i].setAttribute('style', 'visibility: collapse');
+    }
+  }
+}
+
+
+function valthis() {
+    var checkBoxes = document.getElementsByClassName('tool');
+    var isChecked = false;
+    console.log(checkBoxes)
+    for (var i = 0; i < checkBoxes.length; i++) {
+        if (checkBoxes[i].checked) {
+            isChecked = true;
+        };
+    };
+    if (isChecked) {
+    } else {
+        event.preventDefault()
+        alert('Proszę zaznaczyć co najmniej jedno narzędzie do przekazania!');
+    }
+}
+
+
+    </script>
+
+
+{% endblock body %}

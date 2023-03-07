@@ -1,0 +1,86 @@
+{% extends 'tools/tools-base.html' %}
+
+    {% block head %}
+    <title>Wszystkie</title>
+    {% endblock %}
+
+{% block body %}
+<style>
+    table, th, td {
+        border:1px solid black;
+        width: auto;
+        color: black;
+    }
+    table {
+    width: 100%;
+    }
+        tr:hover {
+        background-color: lightgoldenrodyellow;
+    }
+
+
+
+</style>
+    <form action="" method="post" >
+
+{#    <form action="" method="post" >#}
+{#        <input type="submit" value="daj na złom">#}
+    <table>
+    <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>nazwa</th>
+        <th>opis</th>
+        <th>szerokosc</th>
+        <th>kat</th>
+        <th>promien</th>
+        <th>producent</th>
+        <th>stanowisko</th>
+        <th>szuflada</th>
+        <th>typ szuflady</th>
+    </tr>
+{% for tool in tools %}
+
+    <tr class="tool" >
+        <td id="{{ tool.id }}" ><input type="checkbox" value="{{ tool.id }}" class="checkbox" name="tool"></td>
+        <td>{{ tool.id }}</td>
+        <td><a href="/tools/{{ tool.id }}">{{ tool.name }}</a> | <a href="/tools/change/{{ tool.id_dup }}">edit</a>
+            {% if tool.id_position == 1 %}
+             | <a href="/tools/add-quantity/{{ tool.id_dup }}">+</a>
+            {% endif %}
+        </td>
+        <td>{{ tool.description }}</td>
+        <td>{{ tool.width }}</td>
+        <td>{{ tool.angle }}</td>
+        <td>{{ tool.radius }}</td>
+        <td>{{ tool.company }}</td>
+
+        {% for position in positions %}
+            {% if position.id == tool.id_position %}
+                {% set place = position.pretty_name %}
+                <td class="place">{{ place }}</td>
+            {% endif %}
+        {% endfor %}
+
+        <td>{{ tool.shelf }}</td>
+        <td>{{ tool.shelf_type }}</td>
+    </tr>
+{% endfor %}
+    </table>
+    <input type="submit" id="magazine" name="magazine" value="wyslij na magazyn">
+</form>
+
+    <script>
+        placeTd = document.getElementsByClassName('place')
+        inputTd = document.getElementsByClassName('checkbox')
+        for (let i=0;i<placeTd.length;i++){
+            if (placeTd[i].innerHTML === 'Magazyn') {
+                console.log(placeTd[i])
+                console.log(placeTd[i].innerHTML)
+                inputTd[i].disabled = true;
+            }
+        }
+
+    </script>
+
+{% endblock %}

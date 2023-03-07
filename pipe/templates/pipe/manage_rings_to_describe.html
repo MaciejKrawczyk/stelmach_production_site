@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>zlecenia do opisania</title>
+</head>
+<body>
+
+{#<form action="">#}
+{#    <input type="text" name="order_id" id="content" >#}
+{#    <input type="submit">#}
+{#</form>#}
+
+<h1> Zlecenia wymagające opisu </h1>
+
+{% for order in orders_to_describe %}
+    {% set program = order.program %}
+    {% set pipe = order.pipe %}
+    {% if program == "" %}
+    <p><a href="http://10.0.0.2/move/zlecenie/{{ order.order_id }}/orders" target="_blank">{{ order.order_id }}</a> {{ order.gold_color_type }} {{ order.type }} => brak programu</p>
+    {% elif pipe == "" %}
+    <p><a href="http://10.0.0.2/move/zlecenie/{{ order.order_id }}/orders" target="_blank">{{ order.order_id }}</a> {{ order.gold_color_type }} {{ order.type }} => brak rury</p>
+    {% else %}
+    <p><a href="http://10.0.0.2/move/zlecenie/{{ order.order_id }}/orders" target="_blank">{{ order.order_id }}</a> {{ order.gold_color_type }} {{ order.type }}</p>
+    {% endif %}
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="js.js") }}">
+    <script src="{{ url_for('static', filename='js.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+{#    <script>#}
+{#        function myFunction() {#}
+{#        var x = document.getElementById("hide");#}
+{#            if (x.style.visibility === "hidden") {#}
+{#                    x.style.visibility = "visible";#}
+{#                  } else {#}
+{#                    x.style.visibility = "hidden";#}
+{#                    window.location.reload();#}
+{#                    }#}
+{#    }#}
+{#        #}
+{#        socket = io()#}
+{#        socket.connect('http://127.0.0.1:5000/gofuture/color-pipe-order/')#}
+{#        socket.on('connect', function (){#}
+{#            socket.send('a')#}
+{#            console.log("connected")#}
+{#        })#}
+{#        socket.on('message', function (msg){#}
+{#            console.log(msg)#}
+{#            document.getElementById("sent-message").innerHTML = msg;#}
+{#            var y = document.getElementById("hide");#}
+{#            y.setAttribute("style", "visibility: visible;")#}
+{#        })#}
+{##}
+{#    </script>#}
+    <style>
+
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+
+      	 <div id="hide" class="Message" style="visibility: hidden">
+                                <div id="messs"> <a href="#" onclick="myFunction()" title="Close" class="close">X</a>
+                                    <div >
+                                        <h4> MASZ NOWĄ WIADOMOŚĆ </h4>
+                                        <p>
+                                            ------------------
+                                        </p>
+                                        <p id="sent-message">
+
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+<div class="sidebar">
+    <div class="logo-details">
+      <i class='bx bxl-c-plus-plus icon'>👑</i>
+        <div class="logo_name">GoFuture</div>
+        <i class='bx bx-menu' id="btn" >=</i>
+    </div>
+    <ul class="nav-list">
+      <li>
+        <a href="/gofuture/color-pipe-order">
+          <i class='bx bx-grid-alt'>📀</i>
+          <span class="links_name">jeden kolor</span>
+        </a>
+         <span class="tooltip">jeden kolor</span>
+      </li>
+      <li>
+       <a href="/gofuture/one-order-scan">
+         <i class='bx bx-user' >🔍</i>
+         <span class="links_name">1 zlecenie</span>
+       </a>
+       <span class="tooltip">1 zlecenie</span>
+     </li>
+     <li>
+       <a href="/gofuture/color-width-orders">
+         <i class='bx bx-chat' >🪜</i>
+         <span class="links_name">wstawki</span>
+       </a>
+       <span class="tooltip">wstawki</span>
+     </li>
+     <li>
+       <a href="/description-required">
+         <i class='bx bx-pie-chart-alt-2' >👋🏻</i>
+         <span class="links_name">u kierownika</span>
+       </a>
+       <span class="tooltip">u kierownika</span>
+     </li>
+     <li>
+       <a href="/gofuture/done">
+         <i class='bx bx-folder' >📖</i>
+         <span class="links_name">wszystkie zrobione</span>
+       </a>
+       <span class="tooltip">wszystkie zrobione</span>
+     </li>
+     <li>
+       <a href="/gofuture/move">
+         <i class='bx bx-folder' >👉🏻</i>
+         <span class="links_name">przenieś</span>
+       </a>
+       <span class="tooltip">przenieś</span>
+      </li>
+         <li>
+       <a href="/logout">
+         <i class='bx bx-folder' >🚪</i>
+         <span class="links_name">wyloguj: {{ session['username'] }}</span>
+       </a>
+       <span class="tooltip">zalogowany: {{ session['username'] }}</span>
+      </li>
+{#      <li class="profile">#}
+{#         <div class="profile-details">#}
+{#           <!--<img src="profile.jpg" alt="profileImg">-->#}
+{#           <div class="name_job">#}
+{#             <div class="name">for PZ Stelmach</div>#}
+{#             <div class="job">by Maciej Krawczyk</div>#}
+{#           </div>#}
+{#         </div>#}
+{#         <i class='bx bx-log-out' id="log_out" >🕶</i>#}
+{#     </li>#}
+    </ul>
+  </div>
+
+<main>
+{% block body %}{% endblock %}
+</main>
+
+ <script>
+  let sidebar = document.querySelector(".sidebar");
+  let closeBtn = document.querySelector("#btn");
+  let searchBtn = document.querySelector(".bx-search");
+
+  closeBtn.addEventListener("click", ()=>{
+    sidebar.classList.toggle("open");
+    menuBtnChange();//calling the function(optional)
+  });
+
+
+  // following are the code to change sidebar button(optional)
+  function menuBtnChange() {
+   if(sidebar.classList.contains("open")){
+     closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//replacing the iocns class
+   }else {
+     closeBtn.classList.replace("bx-menu-alt-right","bx-menu");//replacing the iocns class
+   }
+  }
+  </script>
+</body>
+</html>

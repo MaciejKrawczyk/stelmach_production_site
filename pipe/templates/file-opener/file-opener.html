@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Orders Scanner</title>
+</head>
+<body>
+    <style class="css-reset">
+        /* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+    </style>
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        body {
+            font-family: 'Poppins';
+            overflow-x: hidden;
+            overflow-y: hidden;
+            background-color: rgb(221, 234, 238);
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+        }
+
+        .right-panel {
+            background-color: lightblue;
+            {#display: flex;#}
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            flex-wrap: wrap;
+        }
+
+        .left-panel {
+            display: flex;
+            justify-content: center;
+            background-color: lightblue;
+            width: 100%;
+            height: 100vh;
+
+        }
+
+        .logo {
+            width:4.5rem;
+            height: 5rem;
+            background-image: url('logo.png');
+            background-size:cover;
+        }
+
+        .search {
+            padding: 0.2rem;
+            border-top-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            width: 89%;
+            height: 2.3rem;
+            border: none;
+            background-color: rgb(221, 234, 238);
+            font-size: large;
+        }
+
+        .input-box {
+            border-radius: 0.5rem;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            background-color: white;
+            height: 3rem;
+            width: 98%;
+        }
+
+        .search-filler {
+            border-bottom-left-radius: 0.5rem;
+            border-top-left-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(221, 234, 238);
+            width: 2.5rem;
+            height: 2.3rem;
+            margin-left: 5px;
+            margin-right: 0;
+        }
+
+        .search-button {
+            border-radius: 10px;
+            width: 15%;
+            font-size: large;
+            background-color: white;
+            border: none;
+            margin-left: 5px;
+            height: 2.8rem;
+            transition: background-color 0.5s, color 0.5s;
+            margin-right: 3px;
+        }
+
+        .search-button:hover {
+            background-color: aliceblue;
+            color: gray;
+            cursor: pointer;
+        }
+
+        .info-box {
+            margin:10px;
+            border-radius: 0.5rem;
+            background-color: white;
+            width: 90%;
+            height: 15rem;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+        }
+
+        .info-box-left {
+            background-color: white;
+            margin: 1rem 0 1rem 1rem;
+        }
+
+        .info-box-right {
+            margin: 1rem 1rem 1rem 0;
+        }
+
+        .svg-icon {
+            margin-bottom: 10px;
+        }
+
+        .title {
+            color: gray;
+        }
+
+        .data-big {
+            display: block;
+            font-weight: 600;
+            font-size: 1.8rem;
+            margin-top: 10px;
+        }
+
+        .title-small {
+            font-size: 0.8rem;
+            display: block;
+            color: gray;
+        }
+
+        .data-small {
+            color: black;
+        }
+
+        .big-title {
+            width: 10%;
+            display: block;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .redirect {
+            padding-top: 0.3rem;
+            margin-top: 1rem;
+            margin-right: 0.8rem;
+            width: 90%;
+            height: 35%;
+            border-radius: 15px;
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            justify-items: center;
+            text-decoration: none;
+            color: white;
+            background-color: violet;
+        }
+
+        .button-text {
+            font-size: large;
+            font-weight: 500 ;
+        }
+
+        .pdf-box .pdf {
+            border-radius: 0.5rem;
+            {#display: block;#}
+            width: 98%;
+            border: 1px solid black;
+            height: 90vh;
+        }
+
+    </style>
+
+    <main class="main">
+        <div class="left-panel">
+            <!-- <div class="logo">  </div> -->
+            <div class="info-box">
+                <div class="info-box-left">
+                    <div class="svg-icon">
+                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                        <svg width="55px" height="55px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.33 3.66996C20.1408 3.48213 19.9035 3.35008 19.6442 3.28833C19.3849 3.22659 19.1135 3.23753 18.86 3.31996L4.23 8.19996C3.95867 8.28593 3.71891 8.45039 3.54099 8.67255C3.36307 8.89471 3.25498 9.16462 3.23037 9.44818C3.20576 9.73174 3.26573 10.0162 3.40271 10.2657C3.5397 10.5152 3.74754 10.7185 4 10.85L10.07 13.85L13.07 19.94C13.1906 20.1783 13.3751 20.3785 13.6029 20.518C13.8307 20.6575 14.0929 20.7309 14.36 20.73H14.46C14.7461 20.7089 15.0192 20.6023 15.2439 20.4239C15.4686 20.2456 15.6345 20.0038 15.72 19.73L20.67 5.13996C20.7584 4.88789 20.7734 4.6159 20.7132 4.35565C20.653 4.09541 20.5201 3.85762 20.33 3.66996ZM4.85 9.57996L17.62 5.31996L10.53 12.41L4.85 9.57996ZM14.43 19.15L11.59 13.47L18.68 6.37996L14.43 19.15Z" fill="#000000"/>
+                        </svg>
+                        <!-- <span class="big-title">
+                            Dane
+                        </span> -->
+                    </div>
+                    <span class="title">
+                        Data wysyłki
+                    </span>
+                    <br>
+                    <span class="data-big">
+                        {{ date }}
+                    </span>
+                    <br>
+                    <span class="title-small">
+                        Klient
+                    </span>
+                    <br>
+                    <span class="data-small">
+                        {{ client }}
+                    </span>
+                </div>
+                <div class="info-box-right">
+
+                    <a class="redirect" href={{ history_link }} target="_blank">
+                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                        <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.8057 5.70615C5.39093 4.87011 5.68354 4.45209 6.11769 4.22604C6.55184 4 7.0621 4 8.08262 4H12H15.9174C16.9379 4 17.4482 4 17.8823 4.22604C18.3165 4.45209 18.6091 4.87011 19.1943 5.70615L19.7915 6.55926C20.6144 7.73493 21.0259 8.32277 21.0064 8.98546C20.9869 9.64815 20.5415 10.2107 19.6507 11.3359L14.375 18V18C13.6417 18.9263 13.275 19.3895 12.8472 19.5895C12.3103 19.8406 11.6897 19.8406 11.1528 19.5895C10.725 19.3895 10.3583 18.9263 9.625 18V18L4.34927 11.3359C3.4585 10.2107 3.01312 9.64815 2.99359 8.98546C2.97407 8.32277 3.38555 7.73493 4.20852 6.55926L4.8057 5.70615Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M9 7.5L8.5 8.25V8.25C8.20344 8.69484 8.23479 9.28176 8.57706 9.69247L10.5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="button-text">Historia</span>
+                    </a>
+                    <a class="redirect" href={{ details_link }} target="_blank">
+                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                        <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 7C12.5523 7 13 7.44772 13 8V13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13V8C11 7.44772 11.4477 7 12 7Z" fill="white"/>
+                        <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" fill="white"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12Z" fill="white"/>
+                        </svg>
+                        <span class="button-text">Szczegóły</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <form method="POST" action="/file-opener">
+
+        </div>
+        <div class="right-panel">
+            <div class="input-box">
+                <div class="svg-search">
+                    <div class="search-filler">
+                    <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21ZM11.5 7.75C9.42893 7.75 7.75 9.42893 7.75 11.5C7.75 13.5711 9.42893 15.25 11.5 15.25C13.5711 15.25 15.25 13.5711 15.25 11.5C15.25 9.42893 13.5711 7.75 11.5 7.75Z" fill="#323232"/>
+                    <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#323232" stroke-width="2"/>
+                    <path d="M14 14L16 16" stroke="#323232" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 11.5C15 13.433 13.433 15 11.5 15C9.567 15 8 13.433 8 11.5C8 9.567 9.567 8 11.5 8C13.433 8 15 9.567 15 11.5Z" stroke="#323232" stroke-width="2"/>
+                    </svg>
+                </div>
+                </div>
+
+                    <input name='id' class="search" autofocus placeholder="Zeskanuj numer zamównia (XXXXXX_X) => Celik / Trendseller / Stelmach-Metrix" type="search">
+                    <input type="submit" value="Szukaj" class="search-button">
+                </form>
+            </div>
+
+            <br style="clear: both;">
+
+            <div class="pdf-box">
+                <object class="pdf" data="{{ pdf_link }}" type="application/pdf">
+                    <embed src="{{pdf_link}}" type="application/pdf">
+                    <p class="error"> Brak zlecenia do wyświetlenia.</p>
+                </object>
+            </div>
+        </div>
+    </main>
+
+
+</body>
+</html>

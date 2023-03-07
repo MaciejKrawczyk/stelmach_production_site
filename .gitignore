@@ -1,0 +1,5 @@
+flask_session/
+pipe/__init__.py
+.idea/
+__pycache__/
+venv/

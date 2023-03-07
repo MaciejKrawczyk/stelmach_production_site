@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Tool</title>
+</head>
+<body>
+    <style class="css-reset">
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  /*
+    2. Remove default margin
+  */
+  * {
+    margin: 0;
+  }
+  /*
+    3. Allow percentage-based heights in the application
+  */
+  html, body {
+    height: 100%;
+  }
+  /*
+    Typographic tweaks!
+    4. Add accessible line-height
+    5. Improve text rendering
+  */
+  body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  /*
+    6. Improve media defaults
+  */
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+  /*
+    7. Remove built-in form typography styles
+  */
+  input, button, textarea, select {
+    font: inherit;
+  }
+  /*
+    8. Avoid text overflows
+  */
+  p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+  }
+  /*
+    9. Create a root stacking context
+  */
+  #root, #__next {
+    isolation: isolate;
+  }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+        html {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            margin-top: 2rem;
+        }
+
+        hr {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            width: 80%;
+            border: none;
+            border-bottom: lightgray solid 1px;
+            margin-top: 0.4rem;
+            margin-bottom: 2rem;
+        }
+
+        .main-container {
+            margin: auto;
+            width: 90vw;
+            height: 100vh;
+        }
+
+        input {
+            display: block;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 3fr 8fr;
+        }
+
+        .left-panel {
+
+        }
+
+        .right-panel {
+
+        }
+
+        .details-container {
+            width: 85%;
+            display: block;
+        }
+
+        .left-title {
+            font-weight: 600;
+        }
+
+        .input-title {
+            font-weight: 500;
+        }
+
+        .radio {
+            width: auto;
+        }
+
+        .file {
+            margin-top: 2rem;
+            border: none;
+        }
+
+        .submit-buttons {
+            margin: 0;
+        }
+
+        .submit {
+            margin: 0;
+            background-color: rgb(97, 165, 224);
+            cursor: pointer;
+        }
+
+        .magazine {
+            margin: 0;
+            background-color:rgb(189, 189, 103) ;
+            cursor: pointer;
+        }
+    </style>
+
+    <form action="/tools/add-tool/" enctype=multipart/form-data method="POST">
+    <div class="main-container">
+        <h1>Dodawanie nowego narzędzia</h1>
+        <p>Wypełnij wszystkie pola, żeby zatwierdzić nowe narzędzie. Pola oznaczone gwiazdką muszą zostać wypełnione.</p>
+        <hr>
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="details-container">
+                    <span class="left-title">
+                        Szczegóły narzędzia
+                    </span>
+                    <p class="left-description">
+                        Informacje, które muszą zostać uzupełnione. Jeśli narzędzie nie posiada danego atrybutu, to wpisz ,,-''.
+                    </p>
+                </div>
+            </div>
+
+            <div class="right-panel">
+
+                    <div>
+                        <span class="input-title">Numer/ID narzędzia*</span>
+                        <input class="textbox" value="" name="name" required type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Opis narzędzia*</span>
+                        <input required class="textbox" value="" name="description" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Szerokość narzędzia [mm]*</span>
+                        <input required class="textbox" value="" name="width" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Kąt [stopnie]*</span>
+                        <input required class="textbox" value="" name="angle" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Promień narzędzia*</span>
+                        <input required class="textbox" value="" name="radius" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Producent*</span>
+                        <input required class="textbox" value="" name="company" type="text">
+                    </div>
+
+                    <div>
+                        <span class="input-title">Ilość*</span>
+                        <input class="textbox" min="1" value="1" name="quantity" required type="number">
+                    </div>
+            </div>
+
+            <div class="left-panel-1">
+                <div class="details-container">
+                    <span class="left-title">
+                        Rodzaj szuflady
+                    </span>
+                    <p class="left-description">
+                        Jeśli narzędzie jest większych rozmiarów, wybierz dużą szufladę, w innym razie wybierz małą.
+                    </p>
+                </div>
+            </div>
+
+            <div class="right-panel-1">
+                <div>
+                    <span class="input-title">duża szuflada*</span>
+                    <input required class="radio" value="big" id="shelf-type1" name="shelf-type" type="radio">
+                </div>
+
+                <div>
+                    <span class="input-title">mała szuflada*</span>
+                    <input required class="radio" value="small" id="shelf-type2" name="shelf-type" type="radio">
+                </div>
+            </div>
+
+            <div class="left-panel-2">
+                <div class="details-container">
+                    <span class="left-title">
+                        Dodaj pliki
+                    </span>
+                    <p class="left-description">
+                        Jeśli do narzędzia są dołączone dokumenty i/lub zdjęcia, zalecane jest ich przesłanie w celu łatwego dostępu do zasobów.
+                    </p>
+                </div>
+            </div>
+
+            <div class="right-panel-2">
+                <div>
+                    <span class="input-title"></span>
+                    <input multiple class="file" name="file" type="file">
+                </div>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <br><br>
+        <div class="submit-buttons">
+        <input class="submit" value="Zatwiedź" type="submit">
+        <br>
+    </form>
+    <form action="/tools/magazyn/">
+        <input class="magazine" type="submit" value="Wróć do magazynu">
+    </form>
+</div>
+
+<br><br><br>
+
+    </div>
+
+    <script>
+
+    </script>
+
+</body>
+</html>
