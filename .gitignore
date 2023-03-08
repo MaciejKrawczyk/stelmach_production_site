@@ -3,3 +3,4 @@ pipe/__init__.py
 .idea/
 __pycache__/
 venv/
+config.json

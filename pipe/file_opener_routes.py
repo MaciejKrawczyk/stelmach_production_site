@@ -51,7 +51,6 @@ def open(order_id):
     celik_trendseller = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().pdf_name
     if celik_trendseller is not None:
         if db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().customer_id == CELIK_ID:
-            print('celik')
             client = 'Celik'
             date = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().d_shipment
             pdf_link = f"/static/public/MAGDA/CELIK PDFY/{celik_trendseller}.pdf"
@@ -60,11 +59,9 @@ def open(order_id):
         else:
             client = 'Trendseller'
             date = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().d_shipment
-            print('trendseller')
             pdf_link = f"/static/public/MAGDA/TRENDSELLER/Trendseller{celik_trendseller}.pdf"
             # pdf_link = f'http://10.0.0.5/public/MAGDA/TRENDSELLER/Trendseller{celik_trendseller}.pdf'
     else:
-        print('metrix')
         date = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().d_shipment
         client_id = db_stelmach_session.query(MetrixOrder).filter(MetrixOrder.order_id == order_id_modified).first().customer_id
         client = db_stelmach_session.query(Customers).filter(Customers.id == client_id).first().name

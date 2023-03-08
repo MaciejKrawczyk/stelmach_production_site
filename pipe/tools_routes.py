@@ -4,7 +4,7 @@ from math import ceil
 from flask import render_template, request, \
     redirect, session, send_file, Blueprint
 from pipe.models import History, Position, Tools
-from pipe import db
+from pipe import db, redirect_tools_link
 from pipe.utils import access_required, add_to_magazine, add_to_magazine_new
 from werkzeug.utils import secure_filename
 from pipe.utils import tools_dead_count, tools_sent_count, tools_all_count, tools_waiting_room
@@ -40,11 +40,11 @@ def tools():
 @tools_routes.route('/tools/magazyn-done/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_done():
+    link = redirect_tools_link
     title = 'MAGAZYN'
     session['title'] = title
     print(f'title: {session.get("title")}')
     positions = Position.query.all()
-    # cnc = CNC.query.all()
     tools = Tools.query.filter_by(id_position=1).all()
     send_tools_count = tools_sent_count()
     tools_dead = tools_dead_count()
@@ -52,7 +52,7 @@ def tools_done():
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-post-done.html', positions=positions, tools=tools, title=title,
                            all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
-                           waiting_room_tools=waiting_room_tools )
+                           waiting_room_tools=waiting_room_tools, link=link)
 
 
 @tools_routes.route('/tools/szyba/', methods=['POST', 'GET'])
