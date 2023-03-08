@@ -247,7 +247,7 @@ h1 {
 <form action="/file-opener">
 <input type="submit" value="PDFy" class="login__submit"/>
 </form>
-          {% if session['username'] == 'tools' or session['username'] == 'admin' %}
+          {% if session['username'] == 'tools' and session['username'] == 'admin' %}
           <form action="/tools/magazyn/">
           <input type="submit" value="TOOLS" class="login__submit"/>
           </form>
