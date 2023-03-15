@@ -1,6 +1,5 @@
-from flask import render_template, request, redirect, session, Blueprint
+from flask import render_template, request, redirect, Blueprint
 from pipe import Base, engine
-import json
 
 
 file_opener_routes = Blueprint("file_opener_routes", __name__, static_folder="static", template_folder="templates")
