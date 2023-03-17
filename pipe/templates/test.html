@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TEST</title>
+</head>
+<body>
+
+<script>
+
+</script>
+
+<style>
+    .order {
+        border: black solid 1px;
+        margin: 2rem;
+        padding: 2rem;
+        border-radius: 0.5rem;
+    }
+
+    .form {
+        border: black 1px solid;
+        display: flex;
+        justify-content: space-evenly;
+    }
+</style>
+
+<h1>Wyszukiwarka historii arkuszy</h1>
+<form class="form" method="post">
+    <input type="search" name="pattern" placeholder="wpisz nr wzoru">
+    <div>
+        <input name="no-ag" checked type="checkbox"><label for="no-ag">bez srebra</label>
+    </div>
+    <div>
+        <input value="50" name="number-of-positions" type="number"><label for="number-of-positions">ilosc zlecen</label>
+    </div>
+    <input value="szukaj" type="submit">
+</form>
+
+
+<ol>
+{% for x in all_orders_with_pattern %}
+    <li>
+            <div class="order">
+                <a target="_blank" href="http://10.0.0.2/move/zlecenie/{{ x[0] }}/orders">
+                    <h3>{{ x }}</h3>
+                </a>
+                <div>{{ x[1] }}</div>
+            </div>
+    </li>
+{% endfor %}
+</ol>
+
+
+
+
+</body>
+</html>

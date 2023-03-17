@@ -6,19 +6,49 @@ from pipe.models import User, GoFutureTable, Role
 from pipe import app, bcrypt, db
 from pipe.forms import RegisterForm, LoginForm
 from pipe.utils import access_required, add_to_magazine, database_default_add
+import asyncio
+import random
+from pipe import Base, engine
+from pipe.file_opener_routes import MetrixOrder, Customers, Orders
+from sqlalchemy.orm import scoped_session, sessionmaker, Query
+from sqlalchemy import select
+
+db_stelmach_session = scoped_session(sessionmaker(bind=engine))
+
+# @app.route('/test-fetch/<string:id>', methods=["GET", "POST"])
+# def test_fetch(id):
+#     list = search_list['title']
+#     new_list = [x for x in list if str(x).startswith(id)]
+#     return new_list
 
 
-@app.route('/tools/test', methods=["GET", "POST"])
-def test():
-    tools_new = {30: 'small',
-                 31: 'small',
-                 32: 'small',
-                 33: 'small',
-                 34: 'small'}
+@app.route('/test-fetch', methods=["GET", "POST"])
+def test_fetch():
+    pattern = request.form.get('pattern')
+    quantity = request.form.get('number-of-positions')
+    no_ag = request.form.get('no-ag')
+    print(no_ag)
+    if no_ag == 'on':
+        all_orders_with_pattern = db_stelmach_session.query(Orders.id, Orders.mat_color, Orders.d_shipment) \
+            .filter(Orders.pattern_name == pattern, Orders.mat_color is not None, Orders.mat_color != '-')\
+            .order_by(Orders.id.desc())\
+            .limit(quantity).all()
+    else:
+        all_orders_with_pattern = db_stelmach_session.query(Orders.id, Orders.mat_color, Orders.d_shipment) \
+            .filter(Orders.pattern_name == pattern).order_by(Orders.id.desc()).limit(quantity).all()
 
-    # add_to_magazine(tools_new)
-    # return add_to_magazine(tools_new)
-    return database_default_add()
+    print(pattern)
+    if request.method == 'post':
+
+        return render_template('test.html', all_orders_with_pattern=all_orders_with_pattern)
+    else:
+        return render_template('test.html', all_orders_with_pattern=all_orders_with_pattern )
+
+
+
+@app.route('/test', methods=["GET", "POST"])
+async def test():
+    return render_template("test.html")
 
 
 @app.route('/register', methods=['GET', 'POST'])
