@@ -97,6 +97,7 @@ def open(order_id):
                     pdf_link = f'http://10.0.0.2/img/obraczki_katalog/zdjecia/0{pattern}.jpg'
                 else:
                     pdf_link = f'http://10.0.0.2/img/obraczki_katalog/zdjecia/{pattern}.jpg'
+
             elif len(pattern) == 4 and pattern[0] == '4':
                 print('kruk')
             elif 'PLZ' in pattern:
