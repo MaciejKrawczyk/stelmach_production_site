@@ -84,11 +84,11 @@ table {
 
         .left-panel {
             display: flex;
-            justify-content: center;
+            {#justify-content: center;#}
             background-color: lightblue;
             width: 100%;
             height: 100vh;
-
+            flex-direction: column;
         }
 
         .logo {
@@ -246,21 +246,25 @@ table {
                         </span> -->
                     </div>
                     <span class="title">
-                        Data wysyłki
-                    </span>
-                    <br>
-                    <span class="data-big">
-                        {{ date }}
-                    </span>
-                    <br>
-                    <span class="title-small">
                         Klient
                     </span>
                     <br>
-                    <span class="data-small">
+                    <span class="data-big">
                         {{ client }}
                     </span>
+                    <br>
+                    <span class="title-small">
+                        Data wysyłki
+                    </span>
+                    <br>
+                    <span class="data-small">
+                        {{ date }}
+                    </span>
                 </div>
+
+
+
+
                 <div class="info-box-right">
 
                     <a class="redirect" href={{ history_link }} target="_blank">
@@ -283,6 +287,58 @@ table {
 
 
                 </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-left">
+                    <div class="svg-icon">
+                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                        <svg width="55px" height="55px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="none">
+                          <path fill="#000000" fill-rule="evenodd" d="M6 3a2 2 0 012-2h4a2 2 0 012 2h1.866a2.014 2.014 0 011.998 2.233C17.716 6.596 17.5 8.87 17.5 10.5c0 1.63.216 3.904.364 5.267A2.014 2.014 0 0115.866 18H4.134a2.014 2.014 0 01-1.998-2.233c.148-1.363.364-3.636.364-5.267 0-1.63-.216-3.904-.364-5.267A2.014 2.014 0 014.134 3H6v2H4.132l-.003.003a.02.02 0 00-.004.007v.007C4.271 6.38 4.5 8.75 4.5 10.5c0 1.75-.228 4.12-.376 5.483v.007a.021.021 0 00.008.01h11.736l.001-.001.002-.002a.023.023 0 00.005-.007v-.007c-.148-1.362-.376-3.732-.376-5.483 0-1.75.228-4.12.376-5.483a.02.02 0 000-.005V5.01a.023.023 0 00-.008-.01H14a2 2 0 01-2 2H8a2 2 0 01-2-2V3zm6 0H8v2h4V3zm2.097 6.717a1 1 0 10-1.394-1.434l-3.521 3.424-1.609-1.126a1 1 0 00-1.146 1.638l2.285 1.6a1 1 0 001.27-.102l4.115-4z"/>
+                        </svg>
+                    </div>
+                    <span class="title">
+                        Wzór
+                    </span>
+                    <br>
+                    <span class="data-big">
+                        {{ pattern }}
+                    </span>
+                    <br>
+                    <span class="title-small">
+                        opis
+                    </span>
+                    <br>
+                    <span class="data-small">
+                        {{ description }}
+                    </span>
+                </div>
+
+
+
+
+{#                <div class="info-box-right">#}
+{##}
+{#                    <a class="redirect" href={{ history_link }} target="_blank">#}
+{#                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->#}
+{#                        <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">#}
+{#                        <path d="M4.8057 5.70615C5.39093 4.87011 5.68354 4.45209 6.11769 4.22604C6.55184 4 7.0621 4 8.08262 4H12H15.9174C16.9379 4 17.4482 4 17.8823 4.22604C18.3165 4.45209 18.6091 4.87011 19.1943 5.70615L19.7915 6.55926C20.6144 7.73493 21.0259 8.32277 21.0064 8.98546C20.9869 9.64815 20.5415 10.2107 19.6507 11.3359L14.375 18V18C13.6417 18.9263 13.275 19.3895 12.8472 19.5895C12.3103 19.8406 11.6897 19.8406 11.1528 19.5895C10.725 19.3895 10.3583 18.9263 9.625 18V18L4.34927 11.3359C3.4585 10.2107 3.01312 9.64815 2.99359 8.98546C2.97407 8.32277 3.38555 7.73493 4.20852 6.55926L4.8057 5.70615Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>#}
+{#                        <path d="M9 7.5L8.5 8.25V8.25C8.20344 8.69484 8.23479 9.28176 8.57706 9.69247L10.5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>#}
+{#                        </svg>#}
+{#                        <span class="button-text">Historia</span>#}
+{#                    </a>#}
+{#                    <a class="redirect" href="/test-fetch" target="_blank">#}
+{#                        <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->#}
+{#                        <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">#}
+{#                        <path d="M12 7C12.5523 7 13 7.44772 13 8V13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13V8C11 7.44772 11.4477 7 12 7Z" fill="white"/>#}
+{#                        <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" fill="white"/>#}
+{#                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12Z" fill="white"/>#}
+{#                        </svg>#}
+{#                        <span class="button-text">Search!</span>#}
+{#                    </a>#}
+{##}
+{##}
+{#                </div>#}
             </div>
 
 

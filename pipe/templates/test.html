@@ -26,9 +26,27 @@
         display: flex;
         justify-content: space-evenly;
     }
+
+    #loading {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        z-index: 9999;
+        text-align: center;
+        padding-top: 25%;
+		}
 </style>
 
 <h1>Wyszukiwarka historii arkuszy</h1>
+
+{#	<div id="loading">#}
+{#		<img src={{ url_for('static', filename='loading.gif') }} alt="Loading..." />#}
+{#	</div>#}
+
 <form class="form" method="post">
     <input type="search" name="pattern" placeholder="wpisz nr wzoru">
     <div>
@@ -37,7 +55,7 @@
     <div>
         <input value="50" name="number-of-positions" type="number"><label for="number-of-positions">ilosc zlecen</label>
     </div>
-    <input value="szukaj" type="submit">
+    <input onclick="" value="szukaj" type="submit">
 </form>
 
 
@@ -54,7 +72,21 @@
 {% endfor %}
 </ol>
 
+<script>
+{#function redirect() {#}
+{#        // Execute your function here#}
+{#        console.log("Function executed before redirect");#}
+{#        // Redirect to the new page#}
+{#        window.location = function () {#}
+{#        document.getElementById("loading").style.display = "none"#}
+{#      }#}
+{#      }#}
+{##}
+{#      window.onload = function() {#}
+{#        console.log("Page loaded");#}
+{#      };#}
 
+</script>
 
 
 </body>

@@ -1,3 +1,5 @@
+import json
+
 import qrcode
 import qrcode.image.svg
 from flask import render_template, request, \
@@ -13,13 +15,9 @@ from pipe.file_opener_routes import MetrixOrder, Customers, Orders
 from sqlalchemy.orm import scoped_session, sessionmaker, Query
 from sqlalchemy import select
 
+
 db_stelmach_session = scoped_session(sessionmaker(bind=engine))
 
-# @app.route('/test-fetch/<string:id>', methods=["GET", "POST"])
-# def test_fetch(id):
-#     list = search_list['title']
-#     new_list = [x for x in list if str(x).startswith(id)]
-#     return new_list
 
 
 @app.route('/test-fetch', methods=["GET", "POST"])
@@ -39,17 +37,34 @@ def test_fetch():
 
     print(pattern)
     if request.method == 'post':
-
-        return render_template('test.html', all_orders_with_pattern=all_orders_with_pattern)
+        return render_template('test.html',)
     else:
-        return render_template('test.html', all_orders_with_pattern=all_orders_with_pattern )
+        return render_template('test.html',)
 
 
 
-@app.route('/test', methods=["GET", "POST"])
-async def test():
-    return render_template("test.html")
+@app.route('/test;no-ag=<no_ag>;ring=<int:pattern>;orders-quantity=<int:quantity>', methods=["GET", "POST"])
+async def test(no_ag, pattern, quantity):
+    print(no_ag)
+    print(pattern)
+    print(quantity)
 
+    if no_ag == 'on':
+        all_orders_with_pattern = db_stelmach_session.query(Orders.id, Orders.mat_color, Orders.d_shipment) \
+            .filter(Orders.pattern_name == pattern, Orders.mat_color is not None, Orders.mat_color != '-')\
+            .order_by(Orders.id.desc())\
+            .limit(quantity).all()
+    else:
+        all_orders_with_pattern = db_stelmach_session.query(Orders.id, Orders.mat_color, Orders.d_shipment) \
+            .filter(Orders.pattern_name == pattern).order_by(Orders.id.desc()).limit(quantity).all()
+
+
+
+
+    json_string = json.dumps(all_orders_with_pattern, default=str)
+
+    return {'data': json_string}
+    # return {}
 
 @app.route('/register', methods=['GET', 'POST'])
 # @access_required('admin')
