@@ -61,14 +61,14 @@ def open(order_id):
         if db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().customer_id == CELIK_ID:
             client = 'Celik'
             date = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().d_shipment
-            # pdf_link = f"/static/public/MAGDA/CELIK PDFY/{celik_trendseller}.pdf"
-            pdf_link = f'http://10.0.0.5/public/MAGDA/TRENDSELLER/{celik_trendseller}.pdf'
+            pdf_link = f"/static/public/MAGDA/CELIK PDFY/{celik_trendseller}.pdf"
+            # pdf_link = f'http://10.0.0.5/public/MAGDA/TRENDSELLER/{celik_trendseller}.pdf'
             pattern = "spec"
         else:
             client = 'Trendseller'
             date = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().d_shipment
-            # pdf_link = f"/static/public/MAGDA/TRENDSELLER/Trendseller{celik_trendseller}.pdf"
-            pdf_link = f'http://10.0.0.5/public/MAGDA/TRENDSELLER/Trendseller{celik_trendseller}.pdf'
+            pdf_link = f"/static/public/MAGDA/TRENDSELLER/Trendseller{celik_trendseller}.pdf"
+            # pdf_link = f'http://10.0.0.5/public/MAGDA/TRENDSELLER/Trendseller{celik_trendseller}.pdf'
             pattern = "spec"
 
     elif is_metrix is not None:
@@ -87,6 +87,7 @@ def open(order_id):
         pattern = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().pattern_name
         if pattern == 'spec':
             for x in celik_list:
+                print(x)
                 if x in description:
                     print(f'znaleziono! {x}')
                     pdf_link = f'http://10.0.0.2/img/obraczki_katalog/zdjecia/{x.upper()}.jpg'
@@ -107,7 +108,9 @@ def open(order_id):
                 print('savcki ok')
             elif 'A' in pattern:
                 print('arenart ok')
+                pdf_link = f"/static/pattern_images/arenart/{pattern}.png"
             elif 'SL' in pattern:
+                pdf_link = f"/static/pattern_images/jaracz/{pattern}.jpg"
                 print('jaracz ok')
             elif len(pattern) == 4 and pattern[0] == 7:
                 print('gessele ok')
