@@ -135,5 +135,5 @@ def open(order_id):
     else:
         return render_template('file-opener/file-opener.html', pdf_link=pdf_link,
                                history_link=history_link, details_link=details_link, client=client, date=date,
-                               pattern=pattern, description=description)
+                               pattern=pattern)
 
