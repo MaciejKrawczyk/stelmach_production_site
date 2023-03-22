@@ -6,6 +6,8 @@ from pipe.celik_list import celik_list
 file_opener_routes = Blueprint("file_opener_routes", __name__, static_folder="static", template_folder="templates")
 
 
+
+
 class MetrixOrder(Base):
     __table__ = Base.metadata.tables['metrix_order']
 
@@ -54,7 +56,6 @@ def open(order_id):
 
     celik_trendseller = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().pdf_name
     is_metrix = db_stelmach_session.query(MetrixOrder).filter(MetrixOrder.order_id == order_id_modified).first()
-    description = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().description.lower()
     print(f'wynik: {celik_trendseller}')
 
     if celik_trendseller is not None and celik_trendseller != "":
@@ -77,7 +78,7 @@ def open(order_id):
         client = db_stelmach_session.query(Customers).filter(Customers.id == client_id).first().name
         pdf_link = f'http://10.0.0.2/metrix/order_data/{order_id_modified}/production.pdf'
         pattern = "spec"
-
+        description = ''
     else:
         date = db_stelmach_session.query(Orders).filter(Orders.id == order_id_modified).first().d_shipment
         client_id = db_stelmach_session.query(Orders).filter(
