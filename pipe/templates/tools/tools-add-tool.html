@@ -167,37 +167,37 @@
 
                     <div>
                         <span class="input-title">Numer/ID narzędzia*</span>
-                        <input class="textbox" value="" name="name" required type="text">
+                        <input class="textbox" value="{{ tool_order[0] }}" name="name" required type="text">
                     </div>
 
                     <div>
                         <span class="input-title">Opis narzędzia*</span>
-                        <input required class="textbox" value="" name="description" type="text">
+                        <input required class="textbox" value="{{ tool_order[1] }}" name="description" type="text">
                     </div>
 
                     <div>
                         <span class="input-title">Szerokość narzędzia [mm]*</span>
-                        <input required class="textbox" value="" name="width" type="text">
+                        <input required class="textbox" value="{{ tool_order[2] }}" name="width" type="text">
                     </div>
 
                     <div>
                         <span class="input-title">Kąt [stopnie]*</span>
-                        <input required class="textbox" value="" name="angle" type="text">
+                        <input required class="textbox" value="{{ tool_order[3] }}" name="angle" type="text">
                     </div>
 
                     <div>
                         <span class="input-title">Promień narzędzia*</span>
-                        <input required class="textbox" value="" name="radius" type="text">
+                        <input required class="textbox" value="{{ tool_order[4] }}" name="radius" type="text">
                     </div>
 
                     <div>
                         <span class="input-title">Producent*</span>
-                        <input required class="textbox" value="" name="company" type="text">
+                        <input required class="textbox" value="{{ tool_order[5] }}" name="company" type="text">
                     </div>
 
                     <div>
                         <span class="input-title">Ilość*</span>
-                        <input class="textbox" min="1" value="1" name="quantity" required type="number">
+                        <input class="textbox" min="1" name="quantity" value="{{ tool_order[6] }}" required type="number">
                     </div>
             </div>
 

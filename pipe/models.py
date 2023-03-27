@@ -64,7 +64,7 @@ class Tools(db.Model):
     company = db.Column(db.String(200), nullable=False)
     id_position = db.Column(db.Integer, nullable=False)
     shelf = db.Column(db.Integer, nullable=True)
-    shelf_type = db.Column(db.Integer, nullable=True)
+    shelf_type = db.Column(db.String(200), nullable=True)
     id_dup = db.Column(db.Integer, nullable=False)
 
 
@@ -72,6 +72,22 @@ class Position(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     pretty_name = db.Column(db.String(200), nullable=True)
+
+
+class OrderTool(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    nr = db.Column(db.String(500), nullable=True)
+    width = db.Column(db.String(200), nullable=True)
+    angle = db.Column(db.String(200), nullable=True)
+    radius = db.Column(db.String(200), nullable=True)
+    company = db.Column(db.String(200), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    ordered = db.Column(db.String(200), nullable=False)
+    arrival = db.Column(db.String(200), nullable=False)
+    who = db.Column(db.String(200), nullable=False)
+    contact = db.Column(db.String(200), nullable=False)
+    is_archive = db.Column(db.Boolean)
 
 
 # Creates database tables, important!

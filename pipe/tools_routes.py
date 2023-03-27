@@ -3,14 +3,15 @@ import shutil
 from math import ceil
 from flask import render_template, request, \
     redirect, session, send_file, Blueprint
-from pipe.models import History, Position, Tools
+from pipe.models import History, Position, Tools, OrderTool
 from pipe import db, redirect_tools_link
 from pipe.utils import access_required, add_to_magazine, add_to_magazine_new
 from werkzeug.utils import secure_filename
 from pipe.utils import tools_dead_count, tools_sent_count, tools_all_count, tools_waiting_room
-
+from datetime import datetime
 
 tools_routes = Blueprint("tools_routes", __name__, static_folder="static", template_folder="templates")
+
 
 def name_of_id_position(id):
     id = int(id)
@@ -18,6 +19,91 @@ def name_of_id_position(id):
     print(position)
     return position.pretty_name
 
+
+@tools_routes.route('/tools/zamowione/', methods=['POST', 'GET'])
+@access_required("technolog")
+def orders():
+    title = 'ZAMÓWIONE'
+    session['title'] = title
+    print(f'title: {session.get("title")}')
+    positions = Position.query.all()
+    tools = OrderTool.query.filter(OrderTool.is_archive != 1).all()
+    send_tools_count = tools_sent_count()
+    tools_dead = tools_dead_count()
+    all_tools_count = tools_all_count()
+    waiting_room_tools = tools_waiting_room()
+    if request.method == 'POST':
+        print('dipa')
+        name = request.form['name']
+        print(name)
+        id = request.form['id']
+        print(id)
+        width = request.form['width'] + 'mm'
+        print(width)
+        angle = request.form['angle'] + '°'
+        print(angle)
+        radius = request.form['radius'] + 'r'
+        print(radius)
+        company = request.form['producer']
+        print(company)
+        quantity = request.form['quantity']
+        print(quantity)
+        order_date = request.form['order-date']
+        order_date = datetime.strptime(order_date, '%Y-%m-%d')
+        formatted_order_date = order_date.strftime('%d/%m/%Y')
+        print(order_date)
+        arrive_date = request.form['arrive-date']
+        arrive_date = datetime.strptime(arrive_date, '%Y-%m-%d')
+        formatted_arrive_date = arrive_date.strftime('%d/%m/%Y')
+        print(arrive_date)
+        who = request.form['customer']
+        print(who)
+        contact = request.form['contact']
+        print(contact)
+
+        order_tool = OrderTool(name=name, nr=id, width=width, angle=angle,
+                               radius=radius, company=company, quantity=quantity,
+                               ordered=formatted_order_date, arrival=formatted_arrive_date,
+                               who=who, contact=contact, is_archive=False)
+
+        db.session.add(order_tool)
+        db.session.commit()
+
+        return redirect('/tools/zamowione')
+    else:
+        pass
+    return render_template('tools/tools-zamowione.html', positions=positions, tools=tools, title=title,
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
+
+
+@tools_routes.route('/tools/zamowione/dodaj/<int:id>', methods=['POST', 'GET'])
+@access_required("technolog")
+def edit_ordersddd(id):
+    tool = OrderTool.query.filter_by(id=id).first()
+    name = tool.nr
+    description = tool.name
+    width = tool.width
+    angle = tool.angle
+    radius = tool.radius
+    company = tool.company
+    quantity = tool.quantity
+    tool_order = [name, description, width, angle, radius, company, quantity]
+
+    # tool.is_archive =
+    db.session.add(tool)
+    db.session.commit()
+    return render_template('tools/tools-add-tool.html', tool_order=tool_order)
+
+
+@tools_routes.route('/tools/zamowione/usun/<int:id>', methods=['POST', 'GET'])
+@access_required("technolog")
+def edit_orders(id):
+    tool = OrderTool.query.filter_by(id=id).first()
+    tool.is_archive = True
+    db.session.add(tool)
+    db.session.commit()
+    return redirect('/tools/zamowione/')
 
 @tools_routes.route('/tools/magazyn/', methods=['POST', 'GET'])
 @access_required("technolog")
@@ -34,7 +120,7 @@ def tools():
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
                            all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
-                           waiting_room_tools=waiting_room_tools )
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/magazyn-done/', methods=['POST', 'GET'])
@@ -76,7 +162,7 @@ def tools_szyba():
 @tools_routes.route('/tools/stanowisko-6/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_stanowisko_6():
-    title='Sttanowisko 6'
+    title = 'Sttanowisko 6'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=3).all()
@@ -86,13 +172,14 @@ def tools_stanowisko_6():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/stanowisko-4/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_stanowisko_4():
-    title='stan 4'
+    title = 'stan 4'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=4).all()
@@ -102,13 +189,14 @@ def tools_stanowisko_4():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/plat-tytan/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_plat_tytan():
-    title='plat-tytan'
+    title = 'plat-tytan'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=5).all()
@@ -118,13 +206,14 @@ def tools_plat_tytan():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/stanowisko-7/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_stanowisko_7():
-    title='stan-7'
+    title = 'stan-7'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=6).all()
@@ -134,13 +223,14 @@ def tools_stanowisko_7():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/stanowisko-13/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_stanowisko_13():
-    title='stan13'
+    title = 'stan13'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=7).all()
@@ -150,7 +240,8 @@ def tools_stanowisko_13():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/zlom/', methods=['POST', 'GET'])
@@ -169,7 +260,6 @@ def tools_zlom():
         tools_to_change = request.form.getlist('tool')
         for tool in tools:
             if str(tool.id) in tools_to_change:
-
                 history_to_delete = History.query.filter_by(tool_id=tool.id).delete()
                 Tools.query.filter(Tools.id == str(tool.id)).delete()
         tools = Tools.query.filter_by(id_position=8).all()
@@ -192,7 +282,7 @@ def tools_zlom():
 @tools_routes.route('/tools/do-ostrzenia/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_do_ostrzenia():
-    title='DO OSTRZENIA'
+    title = 'DO OSTRZENIA'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=9).all()
@@ -202,7 +292,8 @@ def tools_do_ostrzenia():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/w-ostrzeniu/', methods=['POST', 'GET'])
@@ -260,10 +351,12 @@ def tools_w_ostrzeniu():
                                all_tools_count=all_tools_count,
                                waiting_room_tools=waiting_room_tools,
                                tools_sharpen=tools_sharpen)
+
+
 @tools_routes.route('/tools/gofuture/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_gofuture():
-    title='GOFUTURE'
+    title = 'GOFUTURE'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=11).all()
@@ -273,13 +366,14 @@ def tools_gofuture():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/goring-rura/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_goring_rura():
-    title='GORING RURA'
+    title = 'GORING RURA'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=12).all()
@@ -289,13 +383,14 @@ def tools_goring_rura():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/rnd/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_rnd():
-    title='RND'
+    title = 'RND'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=13).all()
@@ -305,13 +400,14 @@ def tools_rnd():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/goring-rnd/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_goring_rnd():
-    title='GORING RND'
+    title = 'GORING RND'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=14).all()
@@ -321,13 +417,14 @@ def tools_goring_rnd():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/5-at-work-nowa/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_5atworknowa():
-    title='5@WORK NOWA'
+    title = '5@WORK NOWA'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=15).all()
@@ -337,13 +434,14 @@ def tools_5atworknowa():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/5-at-work-stara/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_5atworkstara():
-    title='5@WORK STARA'
+    title = '5@WORK STARA'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=16).all()
@@ -353,13 +451,14 @@ def tools_5atworkstara():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/chiron/', methods=['POST', 'GET'])
 @access_required("technolog")
 def tools_chiron():
-    title='CHIRON'
+    title = 'CHIRON'
     session['title'] = title
     print(f'title: {session.get("title")}')
     tools = Tools.query.filter_by(id_position=17).all()
@@ -369,7 +468,9 @@ def tools_chiron():
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
     return render_template('tools/tools-list-base.html', positions=positions, tools=tools, title=title,
-                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                           all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count,
+                           waiting_room_tools=waiting_room_tools)
+
 
 @tools_routes.route('/tools/szukaj/', methods=['POST', 'GET'])
 @access_required("technolog")
@@ -407,7 +508,8 @@ def tools_all():
                 tool_shelf[f'shelf'] = new_shelf, type_of_shelf
                 dict_copy = tool_shelf.copy()
                 tools_shelves.append(dict_copy)
-                new_history = History(what_happened=f'przeniesiono na stanowisko({position_name})', tool_id=tool_to_change.id,
+                new_history = History(what_happened=f'przeniesiono na stanowisko({position_name})',
+                                      tool_id=tool_to_change.id,
                                       position_id=position_id)
                 db.session.add(new_history)
             try:
@@ -438,7 +540,6 @@ def tools_all():
                 tools_duplicates.append(tool.id_dup)
         print(tools_list)
 
-
         return render_template('tools/tools-all.html', positions=positions, tools=tools,
                                send_tools_count=send_tools_count,
                                tools_dead=tools_dead,
@@ -456,7 +557,7 @@ def tools_wyslij_zlom():
     tools_dead = tools_dead_count()
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
-    tools = Tools.query.filter(Tools.id_position!=8).all()
+    tools = Tools.query.filter(Tools.id_position != 8).all()
     positions = Position.query.all()
     if request.method == "POST":
         reason = request.form.get('reason')
@@ -471,7 +572,8 @@ def tools_wyslij_zlom():
                 tool.id_position = 8
                 tool.shelf = '0'
                 tools_from_db_to_change.append(tool)
-                new_history = History(what_happened=f'przeniesiono na ({position_name}), powód: {reason}', tool_id=tool.id,
+                new_history = History(what_happened=f'przeniesiono na ({position_name}), powód: {reason}',
+                                      tool_id=tool.id,
                                       position_id=position_id)
                 db.session.add(new_history)
         print(tools_from_db_to_change)
@@ -482,7 +584,8 @@ def tools_wyslij_zlom():
             return 'wystapil problem'
     else:
         return render_template('tools/tools-send-zlom.html', positions=positions, tools=tools,
-                               send_tools_count=send_tools_count, all_tools_count=all_tools_count, tools_dead=tools_dead, waiting_room_tools=waiting_room_tools)
+                               send_tools_count=send_tools_count, all_tools_count=all_tools_count,
+                               tools_dead=tools_dead, waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/wyslij-ostrzenie/', methods=['POST', 'GET'])
@@ -521,7 +624,8 @@ def tools_wyslij_ostrzenie():
             return 'wystapil problem'
     else:
         return render_template('tools/tools-w-ostrzeniu-wyslane.html', positions=positions, tools=tools, title=title,
-                               all_tools_count=all_tools_count, tools_dead=tools_dead, send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
+                               all_tools_count=all_tools_count, tools_dead=tools_dead,
+                               send_tools_count=send_tools_count, waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/czekaj-ostrzenie/', methods=['POST', 'GET'])
@@ -594,20 +698,21 @@ def tools_action_one():
             return 'wystapil problem'
         return redirect('/tools/przekaz-stanowisko/')
     else:
-        return render_template('tools/tools-send-waiting-room.html', positions=positions, tools=tools, waiting_room_tools=waiting_room_tools)
+        return render_template('tools/tools-send-waiting-room.html', positions=positions, tools=tools,
+                               waiting_room_tools=waiting_room_tools)
 
 
 @tools_routes.route('/tools/przekaz-stanowisko/', methods=['POST', 'GET'])
 @access_required("technolog")
 def choose_position():
-    title='PRZEKAŻ NA STANOWISKO'
+    title = 'PRZEKAŻ NA STANOWISKO'
     session['title'] = title
     print(f'title: {session.get("title")}')
     send_tools_count = tools_sent_count()
     tools_dead = tools_dead_count()
     all_tools_count = tools_all_count()
     waiting_room_tools = tools_waiting_room()
-    tools = Tools.query.filter_by(id_position = 1).all()
+    tools = Tools.query.filter_by(id_position=1).all()
     positions = Position.query.all()
     if request.method == "POST":
 
@@ -622,7 +727,8 @@ def choose_position():
                     print('weszlo')
                     tool.id_position = position_id
                     tool.shelf = '0'
-                    new_history = History(what_happened=f'przeniesiono na stanowisko({position_name})', tool_id=tool_i_id, position_id=position_id)
+                    new_history = History(what_happened=f'przeniesiono na stanowisko({position_name})',
+                                          tool_id=tool_i_id, position_id=position_id)
                     db.session.add(new_history)
 
         try:
@@ -632,7 +738,8 @@ def choose_position():
             return 'wystapil problem'
     else:
         return render_template('tools/tools-przekaz-stanowisko.html/', tools=tools, positions=positions, title=title,
-                               waiting_room_tools=waiting_room_tools, tools_dead=tools_dead, send_tools_count=send_tools_count, all_tools_count=all_tools_count)
+                               waiting_room_tools=waiting_room_tools, tools_dead=tools_dead,
+                               send_tools_count=send_tools_count, all_tools_count=all_tools_count)
 
 
 @tools_routes.route('/tools/add-tool/', methods=['POST', 'GET'])
@@ -678,18 +785,18 @@ def tools_form():
 
         # db.session.commit()
 
-        for tool in range(quantity-1):
+        for tool in range(quantity - 1):
             new_tool_dup = Tools(name=name, description=description + " ",
-                     width=width, angle=angle, radius=radius,
-                     company=company, id_position=1, shelf=new_tool.shelf,
-                     shelf_type=shelf_type, id_dup=new_tool.id)
+                                 width=width, angle=angle, radius=radius,
+                                 company=company, id_position=1, shelf=new_tool.shelf,
+                                 shelf_type=shelf_type, id_dup=new_tool.id)
 
             db.session.add(new_tool_dup)
             db.session.flush()
             db.session.refresh(new_tool_dup)
 
             new_history = History(what_happened='dodano narzędzie do bazy',
-                                tool_id=new_tool_dup.id, position_id=1)
+                                  tool_id=new_tool_dup.id, position_id=1)
 
             db.session.add(new_history)
 
@@ -712,6 +819,89 @@ def tools_form():
         return render_template('tools/tools-add-tool.html')
 
 
+@tools_routes.route('/tools/add-tool/?name=<name>;'
+                    'description=<description>;width=<width>;'
+                    'angle=<angle>;radius=<radius>;company=<company>;'
+                    'quantity=<quantity>', methods=['POST', 'GET'])
+@access_required("technolog")
+def tools_form_from_order(name, description, width, angle, radius, company, quantity):
+
+    tool_order = [name, description, width, angle, radius, company, quantity]
+
+    if request.method == "POST":
+        tools = Tools.query.filter_by(id_position=1).all()
+        name = request.form['name'] if not request.form['name'] is None else '-'
+        description = request.form['description'] if not request.form['description'] is None else '-'
+        width = request.form['width'] + 'mm' if not request.form['width'] is None else '-'
+        angle = request.form['angle'] + '°' if not request.form['angle'] is None else '-'
+        radius = request.form['radius'] + 'r' if not request.form['radius'] is None else '-'
+        company = request.form['company'] if not request.form['company'] is None else '-'
+        shelf_type = request.form['shelf-type']
+        quantity = int(request.form['quantity'])
+
+        new_tool = Tools(name=name, description=description + " ",
+                         width=width, angle=angle, radius=radius,
+                         company=company, id_position=1, shelf=0,
+                         shelf_type=shelf_type, id_dup=0)
+        files = request.files.getlist('file')
+
+        # try:
+        db.session.add(new_tool)
+        db.session.flush()
+        db.session.refresh(new_tool)
+
+        new_tool.id_dup = new_tool.id
+        new_tool_dict = {new_tool.id: shelf_type}
+
+        print(new_tool_dict)
+        shelves = add_to_magazine_new(new_tool_dict)
+        print(shelves)
+        shelf = shelves.get(new_tool.id)
+        new_tool.shelf = shelf[0]
+
+        new_history = History(what_happened='dodano narzędzie do bazy',
+                              tool_id=new_tool.id, position_id=1)
+
+        db.session.add(new_history)
+
+        # db.session.commit()
+
+        for tool in range(quantity - 1):
+            new_tool_dup = Tools(name=name, description=description + " ",
+                                 width=width, angle=angle, radius=radius,
+                                 company=company, id_position=1, shelf=new_tool.shelf,
+                                 shelf_type=shelf_type, id_dup=new_tool.id)
+
+            db.session.add(new_tool_dup)
+            db.session.flush()
+            db.session.refresh(new_tool_dup)
+
+            new_history = History(what_happened='dodano narzędzie do bazy',
+                                  tool_id=new_tool_dup.id, position_id=1)
+
+            db.session.add(new_history)
+
+        db.session.commit()
+
+        directory = f'./files/{new_tool.id_dup}/'
+        is_exist = os.path.exists(directory)
+        if not is_exist:
+            os.makedirs(directory)
+        if files[0].filename != '':
+            for file in files:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(directory, filename))
+
+        # except:
+        #     return "there was an issue with your orders"
+
+        return render_template('tools/shelf_number.html', shelf_for_new_tool=shelf[0], shelf_type=shelf_type)
+    else:
+        return render_template('tools/tools-add-tool.html', tool_order=tool_order)
+
+
+
+
 @tools_routes.route('/tools/<int:id>', methods=['POST', 'GET'])
 @access_required("technolog")
 def browse_history(id):
@@ -721,9 +911,9 @@ def browse_history(id):
     tool_dup = tool.id_dup
     tool_dup = Tools.query.filter_by(id_dup=tool_dup, id_position=1).all()
     all_tools_one_company = Tools.query.filter_by(company=tool.company).all()
-    percentage = ceil((len(all_tools_one_company)/ len(all_tools))*100)
+    percentage = ceil((len(all_tools_one_company) / len(all_tools)) * 100)
     history = History.query.filter_by(tool_id=id).all()
-    history_count = len(history)-1
+    history_count = len(history) - 1
     history_added = history[0]
     history_last = history[-1]
     delta = history_last.date - history_added.date
@@ -749,8 +939,9 @@ def browse_history(id):
                     file.save(os.path.join(directory, filename))
             return redirect(f'/tools/{tool.id}')
 
-    return render_template('tools/tools-tool-history.html', difference=difference, changes_time=changes_time, positions=positions, percentage=percentage, history_added=history_added,
-                           history_last=history_last,history_count=history_count,
+    return render_template('tools/tools-tool-history.html', difference=difference, changes_time=changes_time,
+                           positions=positions, percentage=percentage, history_added=history_added,
+                           history_last=history_last, history_count=history_count,
                            route=route, quantity=quantity, files=files, tool=tool, history=history)
 
 
@@ -760,6 +951,7 @@ def download(filename, id):
     abspath = os.path.abspath(f'./files/{tool.id_dup}/{filename}')
     return send_file(abspath, as_attachment=True)
 
+
 @tools_routes.route('/tools/file/delete/<int:id>/<path:filename>', methods=['GET', 'POST'])
 def delete(filename, id):
     tool = Tools.query.filter_by(id=id).one()
@@ -767,6 +959,7 @@ def delete(filename, id):
     abspath = os.path.abspath(f'./files/{tool.id_dup}/{filename}')
     os.remove(abspath)
     return redirect(f'/tools/{tool.id}')
+
 
 @tools_routes.route('/tools/change/<int:id>', methods=['GET', 'POST'])
 def change(id):
@@ -792,6 +985,7 @@ def change(id):
         return redirect('/tools/magazyn-done')
     else:
         return render_template('tools/tools-change.html', tool=tool, count_tools_dup=count_tools_dup)
+
 
 @tools_routes.route('/tools/add-quantity/<int:id>', methods=['GET', 'POST'])
 def change_quantity(id):

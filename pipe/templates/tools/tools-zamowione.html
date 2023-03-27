@@ -1,0 +1,287 @@
+{% extends 'tools/tools-base.html' %}
+
+    {% block head %}
+    <title>Zamówione</title>
+    {% endblock %}
+
+{% block body %}
+<style>
+    table, th, td {
+        border:1px solid black;
+        width: auto;
+        color: black;
+    }
+    table {
+    width: 100%;
+        margin-bottom: 20px;
+    }
+        tr:hover {
+        background-color: lightgoldenrodyellow;
+    }
+
+        .button {
+
+        }
+
+        /* Hide the modal popup by default */
+.modal {
+  padding-top: 5%;
+  color: black;
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+}
+
+/* Style the modal content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+height: 80%;
+    border-radius: 1rem;
+}
+
+/* Style the close button */
+.close {
+    position: absolute;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+/* Display the modal popup when the button is clicked */
+.show {
+  display: block;
+}
+
+.form {
+}
+
+.form-input {
+    margin: 2rem;
+}
+
+.form-input > label {
+    margin-right: 20px;
+}
+
+.form-submit:focus {
+
+}
+
+.td-full {
+    background-color: red;
+}
+
+.td-mag {
+    background-color: green;
+}
+
+.td-edit {
+    background-color: darkorchid;
+}
+
+.link {
+    margin-left: 15px;
+    color: white;
+    text-decoration: none;
+}
+</style>
+
+
+    <table>
+    <tr>
+        <th>nazwa</th>
+        <th>nr</th>
+        <th>szer</th>
+        <th>kąt</th>
+        <th>promien</th>
+        <th>producent</th>
+        <th>ilosc</th>
+        <th>zamowiono</th>
+        <th>dostawa</th>
+        <th>zamówił</th>
+        <th>kontakt</th>
+        <th>edit</th>
+        <th>mag</th>
+        <th>usuń</th>
+    </tr>
+
+{% for tool in tools %}
+    <tr class="tool" >
+        <td>{{ tool.name }}</td>
+        <td>{{ tool.nr }}</td>
+        <td>{{ tool.width }}</td>
+        <td>{{ tool.angle }}</td>
+        <td>{{ tool.radius }}</td>
+        <td>{{ tool.company }}</td>
+        <td>{{ tool.quantity }}</td>
+        <td>{{ tool.ordered }}</td>
+        <td>{{ tool.arrival }}</td>
+        <td>{{ tool.who }}</td>
+        <td>{{ tool.contact }}</td>
+        <td class="td-edit"><a class="link" href="#">EDIT</a></td>
+        <td class="td-mag"><a class="link" href="dodaj/{{ tool.id }}">-></a></td>
+        <td class="td-full"><a class="link" href="usun/{{ tool.id }}">X</a></td>
+    </tr>
+{% endfor %}
+
+    </table>
+
+{#        <input type="submit" onclick="valthis()" value="przenies na magazyn">#}
+
+
+    <button id="myBtn"> Dodaj zamównienie</button>
+
+
+<div class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+
+      <h1>Formularz dodawania zamówienia</h1>
+        <div class="form">
+          <form method="post">  <!-- zaladuj link bez odswiezania -->
+            <div class="form-input">
+            <label for="name">Nazwa</label>
+            <input required type="text" name="name" id="name">
+            </div>
+
+              <div class="form-input">
+              <label for="id">nr katalogowy/id</label>
+            <input required type="text" name="id" id="id">
+            </div>
+
+          <div class="form-input">
+            <label for="width">Szerokość narzędzia</label>
+            <input required type="text" name="width" id="width">
+            </div>
+
+          <div class="form-input">
+            <label for="angle">Kąt</label>
+            <input required type="text" name="angle" id="angle">
+            </div>
+
+          <div class="form-input">
+            <label for="radius">Promień narzędzia</label>
+            <input required type="text" name="radius" id="radius">
+            </div>
+
+              <div class="form-input">
+              <label for="producer">producent</label>
+            <input required type="text" name="producer" id="producer">
+            </div>
+
+          <div class="form-input">
+            <label for="quantity">Ilość</label>
+            <input required type="number" name="quantity" id="quantity">
+            </div>
+
+              <div class="form-input">
+              <label for="order-date">Data zamówienia</label>
+            <input required type="date" name="order-date" id="order-date">
+                </div>
+
+
+              <div class="form-input">
+              <label for="arrive-date">Planowana data dostawy</label>
+            <input required type="date" name="arrive-date" id="arrive-date">
+            </div>
+
+                  <div class="form-input">
+              <label for="customer">Zamawiający</label>
+            <input required type="text" name="customer" id="customer">
+                </div>
+
+                <div class="form-input">
+              <label for="contact">Osoba do kontaktu</label>
+            <input required type="text" name="contact" id="contact">
+                </div>
+
+              <input type="submit" value="dodaj" class="form-submit">
+
+          </form>
+    </div>
+  </div>
+</div>
+
+    
+
+
+    <script>
+// Get the button element
+var btn = document.getElementById("myBtn");
+
+// Get the modal popup element
+var modal = document.querySelector(".modal");
+
+// Get the close button element
+var closeBtn = document.querySelector(".close");
+
+// When the user clicks on the button, display the modal popup
+btn.onclick = function() {
+  modal.classList.add("show");
+}
+
+// When the user clicks on the close button, hide the modal popup
+closeBtn.onclick = function() {
+  modal.classList.remove("show");
+}
+
+// When the user clicks anywhere outside of the modal popup, hide it
+window.onclick = function(event) {
+  if (event.target === modal) {
+    modal.classList.remove("show");
+  }
+}
+
+
+
+    function liveSearch() {
+  // Locate the card elements
+  let cards = document.getElementsByClassName('tool')
+  // Locate the search input
+  let search_query = document.getElementById("searchbox").value;
+  console.log(cards)
+  // Loop through the cards
+  for (var i = 0; i < cards.length; i++) {
+    // If the text is within the card...
+    if(cards[i].innerText.toLowerCase()
+      // ...and the text matches the search query...
+      .includes(search_query.toLowerCase())) {
+        // ...remove the `.is-hidden` class.
+        cards[i].setAttribute('style', 'visibility: visible');
+    } else {
+      // Otherwise, add the class.
+      cards[i].setAttribute('style', 'visibility: collapse');
+    }
+  }
+}
+
+function valthis() {
+    var checkBoxes = document.getElementsByClassName('tool');
+    var isChecked = false;
+    console.log(checkBoxes)
+    for (var i = 0; i < checkBoxes.length; i++) {
+        if (checkBoxes[i].checked) {
+            isChecked = true;
+        };
+    };
+    if (isChecked) {
+    } else {
+        event.preventDefault()
+        alert('Proszę zaznaczyć co najmniej jedno narzędzie do przekazania!');
+    }
+}
+
+    </script>
+
+{% endblock %}
