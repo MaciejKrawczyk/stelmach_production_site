@@ -746,7 +746,7 @@ def choose_position():
 @access_required("technolog")
 def tools_form():
     # UPLOAD_FOLDER = './files/'
-
+    tool_order = ['','','','','','','']
     if request.method == "POST":
         tools = Tools.query.filter_by(id_position=1).all()
         name = request.form['name'] if not request.form['name'] is None else '-'
@@ -816,7 +816,7 @@ def tools_form():
 
         return render_template('tools/shelf_number.html', shelf_for_new_tool=shelf[0], shelf_type=shelf_type)
     else:
-        return render_template('tools/tools-add-tool.html')
+        return render_template('tools/tools-add-tool.html', tool_order=tool_order)
 
 
 @tools_routes.route('/tools/add-tool/?name=<name>;'
