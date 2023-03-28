@@ -77,6 +77,85 @@ def orders():
                            waiting_room_tools=waiting_room_tools)
 
 
+@tools_routes.route('/tools/zamowione/edit/<int:id>', methods=['POST', 'GET'])
+@access_required("technolog")
+def edit_order_params(id):
+    params_to_change = {}
+    tool = OrderTool.query.filter_by(id=id).first()
+    def put_in_params_dict(param, value):
+        if value is not None:
+            params_to_change[param] = value
+
+    if request.method == 'post':
+        print('huj post')
+    else:
+
+        name = request.form.get('name')
+        # print(name)
+        put_in_params_dict('name', name)
+
+        id = request.form.get('id')
+        # print(id)
+        put_in_params_dict('nr', id)
+
+        width = request.form.get('width')
+        # print(width)
+        put_in_params_dict('width', width)
+
+        angle = request.form.get('angle')
+        # print(angle)
+        put_in_params_dict('angle', angle)
+
+        radius = request.form.get('radius')
+        # print(radius)
+        put_in_params_dict('radius', radius)
+
+        company = request.form.get('producer')
+        # print(company)
+        put_in_params_dict('company', company)
+
+        quantity = request.form.get('quantity')
+        # print(quantity)
+        put_in_params_dict('quantity', quantity)
+
+        order_date = request.form.get('order-date')
+        # print(order_date)
+        if order_date is not None:
+            print(order_date)
+            order_date = datetime.strptime(order_date, '%Y-%m-%d')
+            formatted_order_date = order_date.strftime('%d/%m/%Y')
+            put_in_params_dict('ordered', formatted_order_date)
+
+        arrive_date = request.form.get('arrive-date')
+        if arrive_date is not None:
+            print(arrive_date)
+            arrive_date = datetime.strptime(arrive_date, '%Y-%m-%d')
+            formatted_arrive_date = arrive_date.strftime('%d/%m/%Y')
+        # print(arrive_date)
+            put_in_params_dict('arrival', formatted_arrive_date)
+
+        who = request.form.get('customer')
+        # print(who)
+        put_in_params_dict('who', who)
+
+        contact = request.form.get('contact')
+        # print(contact)
+        put_in_params_dict('contact', contact)
+
+        print(params_to_change)
+
+
+
+        for key, value in params_to_change.items():
+            setattr(tool, key, value)
+
+        db.session.add(tool)
+        db.session.commit()
+
+
+        return redirect('/tools/zamowione')
+
+
 @tools_routes.route('/tools/zamowione/dodaj/<int:id>', methods=['POST', 'GET'])
 @access_required("technolog")
 def edit_ordersddd(id):
@@ -91,8 +170,8 @@ def edit_ordersddd(id):
     tool_order = [name, description, width, angle, radius, company, quantity]
 
     # tool.is_archive =
-    db.session.add(tool)
-    db.session.commit()
+    # db.session.add(tool)
+    # db.session.commit()
     return render_template('tools/tools-add-tool.html', tool_order=tool_order)
 
 
@@ -827,6 +906,7 @@ def tools_form():
 def tools_form_from_order(name, description, width, angle, radius, company, quantity):
 
     tool_order = [name, description, width, angle, radius, company, quantity]
+    # tool_order_db = OrderTool.query.filter_by(id=id).first()
 
     if request.method == "POST":
         tools = Tools.query.filter_by(id_position=1).all()
@@ -880,6 +960,8 @@ def tools_form_from_order(name, description, width, angle, radius, company, quan
                                   tool_id=new_tool_dup.id, position_id=1)
 
             db.session.add(new_history)
+
+
 
         db.session.commit()
 

@@ -91,9 +91,22 @@ height: 80%;
 }
 
 .link {
-    margin-left: 15px;
+    margin-left: 8px;
     color: white;
     text-decoration: none;
+}
+
+.input-table {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+.link-submit {
+    width: 100%;
+    height: 100%;
+    color: black;
 }
 </style>
 
@@ -118,18 +131,20 @@ height: 80%;
 
 {% for tool in tools %}
     <tr class="tool" >
-        <td>{{ tool.name }}</td>
-        <td>{{ tool.nr }}</td>
-        <td>{{ tool.width }}</td>
-        <td>{{ tool.angle }}</td>
-        <td>{{ tool.radius }}</td>
-        <td>{{ tool.company }}</td>
-        <td>{{ tool.quantity }}</td>
-        <td>{{ tool.ordered }}</td>
-        <td>{{ tool.arrival }}</td>
-        <td>{{ tool.who }}</td>
-        <td>{{ tool.contact }}</td>
-        <td class="td-edit"><a class="link" href="#">EDIT</a></td>
+    <form method="post" action="edit/{{ tool.id }}">
+        <td>{{ tool.name }}<input disabled name="name" class="input-table" id="name1" type="text" value="{{ tool.name }}"><button class="edit-button" id="edit-name">edit</button></td>
+        <td>{{ tool.nr }}<input disabled name="id" class="input-table" id="id1" type="text" value="{{ tool.nr }}"><button class="edit-button" id="edit-id">edit</button></td>
+        <td>{{ tool.width }}<input disabled name="width" class="input-table" id="width1" type="text" value="{{ tool.width }}"><button class="edit-button" id="edit-width">edit</button></td>
+        <td>{{ tool.angle }}<input disabled name="angle" class="input-table" id="angle1" type="text" value="{{ tool.angle }}"><button class="edit-button" id="edit-angle">edit</button></td>
+        <td>{{ tool.radius }}<input disabled name="radius" class="input-table" id="radius1" type="text" value="{{ tool.radius }}"><button class="edit-button" id="edit-radius">edit</button></td>
+        <td>{{ tool.company }}<input disabled name="producer" class="input-table" id="producer1" type="text" value="{{ tool.company }}"><button class="edit-button" id="edit-producer">edit</button></td>
+        <td>{{ tool.quantity }}<input disabled name="quantity" class="input-table" id="quantity1" type="number" value="{{ tool.quantity }}"><button class="edit-button" id="edit-quantity">edit</button></td>
+        <td>{{ tool.ordered }}<input disabled name="order-date" class="input-table" id="order-date1" type="date" value="{{ tool.ordered }}"><button class="edit-button" id="edit-order-date">edit</button></td>
+        <td>{{ tool.arrival }}<input disabled name="arrive-date" class="input-table" id="arrive-date1" type="date" value="{{ tool.arrival }}"><button class="edit-button" id="edit-arrive-date">edit</button></td>
+        <td>{{ tool.who }}<input disabled name="customer" class="input-table" id="customer1" type="text" value="{{ tool.who }}"><button class="edit-button" id="edit-customer">edit</button></td>
+        <td>{{ tool.contact }}<input disabled name="contact" class="input-table" id="contact1" type="text" value="{{ tool.contact }}"><button class="edit-button" id="edit-contact">edit</button></td>
+        <td class="td-edit"><input value="edytuj" class="link-submit" type="submit""></td>
+        </form>
         <td class="td-mag"><a class="link" href="dodaj/{{ tool.id }}">-></a></td>
         <td class="td-full"><a class="link" href="usun/{{ tool.id }}">X</a></td>
     </tr>
@@ -217,14 +232,39 @@ height: 80%;
 
 
     <script>
+    const editButtonName = document.getElementById('edit-name')
+    const editButtonId = document.getElementById('edit-id')
+    const editButtonWidth = document.getElementById('edit-width')
+    const editButtonAngle = document.getElementById('edit-angle')
+    const editButtonRadius = document.getElementById('edit-radius')
+    const editButtonProducer = document.getElementById('edit-producer')
+    const editButtonQuantity = document.getElementById('edit-quantity')
+    const editButtonOrderDate = document.getElementById('edit-order-date')
+    const editButtonArriveDate = document.getElementById('edit-arrive-date')
+    const editButtonCustomer = document.getElementById('edit-customer')
+    const editButtonContact = document.getElementById('edit-contact')
+    const inputName = document.getElementById('name1')
+    const inputId =  document.getElementById('id1')
+    const inputWidth =  document.getElementById('width1')
+    const inputAngle =  document.getElementById('angle1')
+    const inputRadius =  document.getElementById('radius1')
+    const inputProducer =  document.getElementById('producer1')
+    const inputQuantity =  document.getElementById('quantity1')
+    const inputOrderDate = document.getElementById('order-date1')
+    const inputArriveDate =  document.getElementById('arrive-date1')
+    const inputCustomer =  document.getElementById('customer1')
+    const inputContact =  document.getElementById('contact1')
+
+
+
 // Get the button element
-var btn = document.getElementById("myBtn");
+const btn = document.getElementById("myBtn");
 
 // Get the modal popup element
-var modal = document.querySelector(".modal");
+const modal = document.querySelector(".modal");
 
 // Get the close button element
-var closeBtn = document.querySelector(".close");
+const closeBtn = document.querySelector(".close");
 
 // When the user clicks on the button, display the modal popup
 btn.onclick = function() {
@@ -281,6 +321,63 @@ function valthis() {
         alert('Proszę zaznaczyć co najmniej jedno narzędzie do przekazania!');
     }
 }
+
+
+    editButtonName.addEventListener('click', () => {
+        inputName.disabled = false
+        editButtonName.disabled = true
+    })
+
+    editButtonId.addEventListener('click', () => {
+        inputId.disabled = false
+        editButtonId.disabled = true
+    })
+
+    editButtonWidth.addEventListener('click', () => {
+        inputWidth.disabled = false
+        editButtonWidth.disabled = true
+    })
+
+    editButtonAngle.addEventListener('click', () => {
+        inputAngle.disabled = false
+        editButtonAngle.disabled = true
+    })
+
+    editButtonRadius.addEventListener('click', () => {
+        inputRadius.disabled = false
+        editButtonRadius.disabled = true
+    })
+
+    editButtonProducer.addEventListener('click', () => {
+        inputProducer.disabled = false
+        editButtonProducer.disabled = true
+    })
+
+    editButtonQuantity.addEventListener('click', () => {
+        inputQuantity.disabled = false
+        editButtonQuantity.disabled = true
+    })
+
+    editButtonOrderDate.addEventListener('click', () => {
+        inputOrderDate.disabled = false
+        editButtonOrderDate.disabled = true
+    })
+
+    editButtonArriveDate.addEventListener('click', () => {
+        inputArriveDate.disabled = false
+        editButtonArriveDate.disabled = true
+    })
+
+    editButtonCustomer.addEventListener('click', () => {
+        inputCustomer.disabled = false
+        editButtonCustomer.disabled = true
+    })
+
+    editButtonContact.addEventListener('click', () => {
+        inputContact.disabled = false
+        editButtonContact.disabled = true
+    })
+
 
     </script>
 
