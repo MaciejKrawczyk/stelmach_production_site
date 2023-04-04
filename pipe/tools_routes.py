@@ -681,6 +681,7 @@ def tools_wyslij_ostrzenie():
     tools = Tools.query.filter(Tools.id_position == 9).all()
     positions = Position.query.all()
     if request.method == "POST":
+        sharp_company = request.form.get('sharp-company')
         tool_id = request.form.getlist('tool')
         position_id = 10
         tools_to_change = request.form.getlist('tool')
@@ -691,7 +692,7 @@ def tools_wyslij_ostrzenie():
             if str(tool.id) in tools_to_change:
                 tool.id_position = 10
                 tool.shelf = '0'
-                new_history = History(what_happened=f'przeniesiono na stanowisko({position_name})', tool_id=tool.id,
+                new_history = History(what_happened=f'wysłano do ostrzenia do firmy {sharp_company}', tool_id=tool.id,
                                       position_id=position_id)
                 db.session.add(new_history)
                 tools_from_db_to_change.append(tool)
