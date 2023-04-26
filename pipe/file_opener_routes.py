@@ -133,6 +133,7 @@ def open(order_id):
     if request.method == 'POST':
         return redirect(f'/file-opener/{order_id}')
     else:
+        db_stelmach_session.close()
         return render_template('file-opener/file-opener.html', pdf_link=pdf_link,
                                history_link=history_link, details_link=details_link, client=client, date=date,
                                pattern=pattern)
