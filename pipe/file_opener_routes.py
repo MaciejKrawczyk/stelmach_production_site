@@ -43,6 +43,7 @@ def open(order_id):
     date = ""
     client = ""
     pdf_link = ""
+    description = ''
 
     length = len(order_id)
     position_of_underscore = order_id.index('_')
